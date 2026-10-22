@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="مِرْقاة">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="مِرْقاة">
+<meta name="description" content="مِرْقاة — تطبيق عربي لتنظيم المهام اليومية ومتابعة الإنجاز.">
 <title>مِرْقاة — نظّم إنجازك</title>
 
 <link rel="manifest" href="./manifest.json">
@@ -99,6 +100,16 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .guest-banner-desc { font-size: 10.5px; color: #a67a4a; margin-top: 2px; }
 .guest-banner-btn { padding: 9px 13px; border-radius: 9px; border: none; background: var(--accent); color: #fff; font-family: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
 
+.install-banner { background: linear-gradient(135deg, #6fa88f 0%, #4a7562 100%); border-radius: 16px; padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(74, 117, 98, 0.25); cursor: pointer; position: relative; overflow: hidden; }
+.install-banner:active { transform: scale(0.98); }
+.install-banner-icon { width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.install-banner-icon svg { width: 22px; height: 22px; }
+.install-banner-body { flex: 1; min-width: 0; color: #fff; }
+.install-banner-title { font-size: 14px; font-weight: 700; }
+.install-banner-desc { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+.install-banner-btn { padding: 9px 16px; border-radius: 10px; border: none; background: #fff; color: #4a7562; font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
+.install-banner-close { position: absolute; top: 6px; left: 6px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.2); border: none; color: #fff; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1; }
+
 .list-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
 .list-card { background: var(--surface); border-radius: 18px; padding: 18px 16px 16px; cursor: pointer; border: 1px solid var(--cat-border); font-family: inherit; text-align: right; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
 .list-icon { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, var(--cat-color) 0%, var(--cat-dark) 100%); }
@@ -137,7 +148,6 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .cat-hadith-icon { color: var(--primary); flex-shrink: 0; }
 .cat-hadith-icon svg { width: 18px; height: 18px; }
 .cat-hadith-text { flex: 1; font-size: 12.5px; color: var(--muted); line-height: 1.6; font-weight: 500; }
-.cat-hadith-close { background: none; border: none; color: var(--faint); font-size: 18px; cursor: pointer; padding: 0; line-height: 1; }
 
 .task { background: var(--surface); border-radius: 16px; padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--task-border); }
 .task.done { background: var(--task-tint); border-color: var(--task-border-strong); }
@@ -276,8 +286,11 @@ a.settings-item { text-decoration: none; color: inherit; }
 .settings-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
 .settings-label.danger { color: var(--danger); }
 .settings-value { font-size: 12px; color: var(--muted); font-weight: 600; }
+.settings-item.install-highlight { background: linear-gradient(135deg, #6fa88f 0%, #4a7562 100%); color: #fff; border: none; }
+.settings-item.install-highlight .settings-icon { background: rgba(255,255,255,0.25); color: #fff; }
+.settings-item.install-highlight .settings-label { color: #fff; font-weight: 700; }
+.settings-item.install-highlight .settings-value { color: rgba(255,255,255,0.9); }
 
-/* Toast - persistent with close button */
 .toast { position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: #fff; padding: 12px 12px 12px 16px; border-radius: 12px; font-size: 13px; font-weight: 500; z-index: 200; text-align: center; transition: transform 0.3s; max-width: 90%; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-lg); pointer-events: none; }
 .toast.show { transform: translateX(-50%) translateY(0); pointer-events: auto; }
 .toast-close { background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 16px; cursor: pointer; padding: 4px 9px; border-radius: 7px; line-height: 1; flex-shrink: 0; }
@@ -288,7 +301,6 @@ a.settings-item { text-decoration: none; color: inherit; }
 
 <div class="app" id="app">
 
-  <!-- SPLASH -->
   <div id="splash-screen">
     <div class="splash-logo"><svg viewBox="0 0 64 64"><path d="M18 40 L32 20 L46 40" stroke="#fff" stroke-width="3.5" fill="none"/><circle cx="32" cy="46" r="2.5" fill="#fff"/></svg></div>
     <div class="splash-quote">قال رسول الله ﷺ: «اغتنم خمساً قبل خمس: حياتك قبل موتك، وصحتك قبل سقمك، وفراغك قبل شغلك، وشبابك قبل هرمك، وغناك قبل فقرك»</div>
@@ -296,7 +308,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     <button class="splash-next-btn" onclick="document.getElementById('splash-screen').style.display='none'">التالي ›</button>
   </div>
 
-  <!-- TUTORIAL -->
   <div id="tutorial-screen">
     <div class="tut-icon" id="tut-icon"></div>
     <div class="tut-title" id="tut-title"></div>
@@ -307,7 +318,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- AUTH -->
   <div class="screen" id="auth-screen">
     <div class="auth-box">
       <button class="guest-back-btn" id="guest-back-btn" onclick="cancelGuestUpgrade()"><span>العودة للتطبيق</span></button>
@@ -331,7 +341,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- HOME -->
   <div class="screen" id="home-screen">
     <div class="header">
       <div class="header-logo"><svg viewBox="0 0 64 64"><path d="M18 40 L32 20 L46 40" stroke="#fff" stroke-width="3.5" fill="none"/><circle cx="32" cy="46" r="2.5" fill="#fff"/></svg></div>
@@ -347,6 +356,21 @@ a.settings-item { text-decoration: none; color: inherit; }
         <div class="guest-banner-body"><div class="guest-banner-title">أنت تستخدم حساب ضيف</div><div class="guest-banner-desc">أنشئ حساباً سحابياً لفتح بياناتك على أي جهاز</div></div>
         <button class="guest-banner-btn" onclick="showSignupForGuest()">سجّل الآن</button>
       </div>
+      <div class="install-banner" id="install-banner" style="display:none;" onclick="installApp()">
+        <button class="install-banner-close" type="button" onclick="event.stopPropagation(); dismissInstallBanner();">×</button>
+        <div class="install-banner-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+        <div class="install-banner-body">
+          <div class="install-banner-title">ثبّت مِرْقاة على جهازك</div>
+          <div class="install-banner-desc">اضغط للتثبيت الفوري</div>
+        </div>
+        <button class="install-banner-btn" type="button">تثبيت</button>
+      </div>
       <button class="add-prominent-btn" onclick="openCategoryModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         إضافة قائمة جديدة
@@ -361,7 +385,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </nav>
   </div>
 
-  <!-- SECTIONS -->
   <div class="screen" id="sections-screen">
     <div class="header">
       <button class="header-btn" onclick="backFromSections()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -381,7 +404,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- TASKS -->
   <div class="screen" id="tasks-screen">
     <div class="header">
       <button class="header-btn" onclick="backFromTasks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -400,7 +422,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- HISTORY -->
   <div class="screen" id="history-screen">
     <div class="header">
       <button class="header-btn hist-back-btn" id="history-back-btn" onclick="historyBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -414,7 +435,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     <div class="content" id="history-content"></div>
   </div>
 
-  <!-- SETTINGS -->
   <div class="screen" id="settings-screen">
     <div class="header">
       <button class="header-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -426,7 +446,6 @@ a.settings-item { text-decoration: none; color: inherit; }
 
   <div class="overlay" id="overlay" onclick="closeAllModals()"></div>
 
-  <!-- TASK MODAL -->
   <div class="modal" id="task-modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
@@ -476,7 +495,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- CATEGORY MODAL -->
   <div class="modal" id="category-modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
@@ -484,14 +502,14 @@ a.settings-item { text-decoration: none; color: inherit; }
       <button class="modal-close" onclick="closeCategoryModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
-      <label class="form-label">اختر نوع القائمة (تحدد الاسم والأيقونة واللون)</label>
+      <label class="form-label">اختر نوع القائمة</label>
       <div class="preset-cat-grid" id="preset-cat-grid"></div>
       <div class="form-field">
         <label class="form-label">اسم القائمة</label>
         <input type="text" class="form-input" id="cat-name-input" placeholder="مثال: سفر">
       </div>
       <div class="form-field">
-        <label class="form-label">اللون (اختياري — للقوائم المخصصة)</label>
+        <label class="form-label">اللون (اختياري)</label>
         <div class="color-picker" id="cat-color-picker"></div>
       </div>
     </div>
@@ -501,7 +519,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- SECTION MODAL -->
   <div class="modal" id="section-modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
@@ -520,7 +537,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- TIME PICKER -->
   <div class="modal" id="time-modal" style="z-index: 110;">
     <div class="modal-handle"></div>
     <div class="modal-header">
@@ -547,6 +563,43 @@ a.settings-item { text-decoration: none; color: inherit; }
     <div class="modal-footer">
       <button class="btn btn-cancel" onclick="closeTimePicker()">إلغاء</button>
       <button class="btn btn-save" onclick="confirmTime()">إضافة</button>
+    </div>
+  </div>
+
+  <!-- iOS INSTALL MODAL -->
+  <div class="modal" id="ios-install-modal" style="z-index: 115;">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2>تثبيت مِرْقاة على iPhone</h2>
+      <button class="modal-close" onclick="closeIosInstallModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align: center; padding: 8px 0 20px;">
+        <div style="width: 72px; height: 72px; background: var(--primary-soft); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; color: var(--primary);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 36px; height: 36px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 8px;">خطوتان فقط لتثبيت التطبيق</h3>
+        <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">Apple تشترط هاتين الخطوتين — لا يمكن تجاوزهما</p>
+      </div>
+      <div style="background: var(--surface-soft); border-radius: 14px; padding: 18px;">
+        <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+          <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0;">1</div>
+          <div style="flex: 1;">
+            <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">اضغط زر المشاركة ⬆</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.6;">هو المربع مع سهم في أسفل شريط Safari</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0;">2</div>
+          <div style="flex: 1;">
+            <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">اختر "إضافة إلى الشاشة الرئيسية"</div>
+            <div style="font-size: 12.5px; color: var(--muted); line-height: 1.6;">ستجد التطبيق على شاشتك الرئيسية</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-save" onclick="closeIosInstallModal()" style="flex: 1;">فهمت</button>
     </div>
   </div>
 
@@ -863,7 +916,8 @@ var ICONS = {
   chevron: "<svg class='hist-chevron' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><polyline points='15 18 9 12 15 6'/></svg>",
   arrow: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><polyline points='15 18 9 12 15 6'/></svg>",
   cloud: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z'/></svg>",
-  apps: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><rect x='3' y='3' width='7' height='7' rx='1.5'/><rect x='14' y='3' width='7' height='7' rx='1.5'/><rect x='3' y='14' width='7' height='7' rx='1.5'/><rect x='14' y='14' width='7' height='7' rx='1.5'/></svg>"
+  apps: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><rect x='3' y='3' width='7' height='7' rx='1.5'/><rect x='14' y='3' width='7' height='7' rx='1.5'/><rect x='3' y='14' width='7' height='7' rx='1.5'/><rect x='14' y='14' width='7' height='7' rx='1.5'/></svg>",
+  install: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2'><path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' y1='15' x2='12' y2='3'/></svg>"
 };
 
 var PRESET_CATEGORIES = [
@@ -1010,6 +1064,9 @@ function enterApp() {
 
     var s = loadSettings();
     if (!s.tutorialDone) setTimeout(startTutorial, 500);
+
+    // ✅ محاولة إطلاق نافذة التثبيت تلقائياً — بدون أي زر من عندنا
+    setTimeout(tryAutoInstall, 2200);
   } catch (err) {
     console.error(err);
     showScreen("auth");
@@ -1101,9 +1158,9 @@ function ensureDefaultPrayers() {
 var TUT_STEPS = [
   { title: "أهلاً بك في مِرْقاة", desc: "التطبيق يساعدك على تنظيم مهامك اليومية ومتابعة إنجازك يوماً بيوم.", icon: ICONS.cloud },
   { title: "القوائم", desc: "لديك قوائم جاهزة. يمكنك إضافة قوائم جديدة من الزر الكبير أعلى الشاشة.", icon: ICONS.apps },
-  { title: "الأصناف", desc: "كل قائمة تحتوي أصنافاً. مثلاً داخل (دينية) يوجد صنف (الصلاة). اضغط على الصنف لتفتح مهامه.", icon: ICONS.check },
-  { title: "المزامنة السحابية", desc: "أنشئ حساباً سحابياً بالبريد لتفتح مهامك على أي جهاز — بياناتك محفوظة سحابياً.", icon: ICONS.cloud },
-  { title: "التسجيل التلقائي", desc: "في نهاية اليوم، يسجل التطبيق إنجازك تلقائياً في شاشة السجل لترى تقدمك.", icon: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><circle cx='12' cy='12' r='10'/><polyline points='12 6 12 12 16 14'/></svg>" }
+  { title: "الأصناف", desc: "كل قائمة تحتوي أصنافاً. مثلاً داخل (دينية) يوجد صنف (الصلاة).", icon: ICONS.check },
+  { title: "المزامنة السحابية", desc: "أنشئ حساباً سحابياً بالبريد لتفتح مهامك على أي جهاز.", icon: ICONS.cloud },
+  { title: "التسجيل التلقائي", desc: "في نهاية اليوم، يسجل التطبيق إنجازك تلقائياً في شاشة السجل.", icon: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><circle cx='12' cy='12' r='10'/><polyline points='12 6 12 12 16 14'/></svg>" }
 ];
 function startTutorial() { tutStep = 0; document.getElementById("tutorial-screen").classList.add("active"); renderTutStep(); }
 function renderTutStep() {
@@ -1211,7 +1268,6 @@ function renderHome() {
   container.innerHTML = html;
 }
 
-// ✅ حذف القوائم — ضغط مرتين (يعمل على كل المتصفحات)
 var catDeleteTimers = {};
 function deleteCategory(catId, ev) {
   if (ev) { ev.stopPropagation(); ev.preventDefault(); }
@@ -1253,7 +1309,6 @@ function renderSections() {
   });
   document.getElementById("sections-subtitle").textContent = secs.length + " صنف · " + doneTasks + "/" + totalTasks + " منجز";
 
-  // ✅ الحديث يظهر هنا — عند دخول القائمة الرئيسية فقط
   var hadithC = document.getElementById("sections-hadith-container");
   var hadith = CATEGORY_HADITHS[currentCategoryId];
   if (hadith) {
@@ -1323,7 +1378,6 @@ function renderTasks() {
   var sec = cat && cat.sections ? cat.sections.filter(function(s){ return s.id === currentSectionId; })[0] : null;
   document.getElementById("tasks-title").textContent = sec ? sec.name : (cat ? cat.name : "المهام");
 
-  // ✅ لا يوجد حديث هنا — الحديث انتقل لشاشة الأصناف
   var tasks = currentTasks.filter(function(t){ return t.cat === currentCategoryId && t.section === currentSectionId; });
   var activeCount = tasks.filter(function(t){ return !t.done; }).length;
   document.getElementById("tasks-subtitle").textContent = activeCount + " نشطة من " + tasks.length;
@@ -1779,7 +1833,16 @@ function renderSettings() {
   var s = loadSettings();
   var html = "";
 
-  // حساب المستخدم
+  if (!isAppInstalled) {
+    html += "<div class='settings-group'>" +
+      "<button class='settings-item install-highlight' type='button' onclick='installApp()'>" +
+        "<div class='settings-icon'>" + ICONS.install + "</div>" +
+        "<div class='settings-label'>تثبيت التطبيق على الجهاز</div>" +
+        "<div class='settings-value'>📥 اضغط</div>" +
+      "</button>" +
+    "</div>";
+  }
+
   html += "<div class='settings-group'><div class='settings-item' style='cursor:default'><div class='settings-icon' " + (guest ? "style='background:var(--accent-soft);color:#8a5a2c'" : "") + "><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg></div><div class='settings-label'>" + escapeHTML(displayName) + "</div><div class='settings-value'>" + (cloud ? "☁ سحابي" : (guest ? "ضيف" : "محلي")) + "</div></div></div>";
 
   if (guest) {
@@ -1789,7 +1852,6 @@ function renderSettings() {
     html += "<div class='settings-group'><div class='settings-item' style='cursor:default'><div class='settings-icon'>" + ICONS.cloud + "</div><div class='settings-label' style='font-size:12px;'>المزامنة السحابية مُفعّلة — بياناتك تُحدّث تلقائياً</div></div></div>";
   }
 
-  // ✅ تطبيقات أخرى
   html += "<div class='settings-group'>" +
     "<a href='https://popo518.github.io/VocabJordan/' target='_blank' rel='noopener' class='settings-item'>" +
       "<div class='settings-icon accent'>" + ICONS.apps + "</div>" +
@@ -1798,10 +1860,8 @@ function renderSettings() {
     "</a>" +
   "</div>";
 
-  // إعدادات
   html += "<div class='settings-group'>" + buildToggle("sounds", "الأصوات", s.sounds) + buildToggle("vibrate", "الاهتزاز", s.vibrate) + "</div>";
 
-  // حذف + خروج
   html += "<div class='settings-group'><button class='settings-item' onclick='clearAllData()'><div class='settings-icon danger'>" + ICONS.del + "</div><div class='settings-label danger'>حذف كل المهام والسجل</div></button></div>";
   html += "<div class='settings-group'><button class='settings-item' onclick='logout()'><div class='settings-icon accent'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/><polyline points='16 17 21 12 16 7'/><line x1='21' y1='12' x2='9' y2='12'/></svg></div><div class='settings-label'>" + (guest ? "إنهاء الجلسة" : "تسجيل الخروج") + "</div></button></div>";
   container.innerHTML = html;
@@ -1817,7 +1877,7 @@ function clearAllData() {
 }
 
 // ==========================================
-// 20. TOAST — ثابت مع زر إغلاق
+// 20. TOAST
 // ==========================================
 var toastTimer = null;
 function showToast(msg, autoHide) {
@@ -1833,7 +1893,119 @@ function hideToast() {
 }
 
 // ==========================================
-// 21. PWA REGISTRATION
+// 21. PWA INSTALL — تلقائي 100%
+// ==========================================
+var deferredInstallPrompt = null;
+var installAttemptedThisSession = false;
+
+var isAppInstalled = window.matchMedia('(display-mode: standalone)').matches
+  || window.navigator.standalone === true
+  || document.referrer.indexOf('android-app://') > -1;
+
+function isIOSDevice() { return /iPhone|iPad|iPod/.test(navigator.userAgent || ''); }
+
+// ✅ التقاط حدث التثبيت — وحفظه
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  updateInstallBanner();
+  if (document.getElementById('settings-screen').classList.contains('active')) renderSettings();
+});
+
+// ✅ عند التثبيت الفعلي
+window.addEventListener('appinstalled', function() {
+  deferredInstallPrompt = null;
+  isAppInstalled = true;
+  updateInstallBanner();
+  showToast("تم تثبيت التطبيق بنجاح ✓ — تجده على شاشتك الرئيسية");
+  if (document.getElementById('settings-screen').classList.contains('active')) renderSettings();
+});
+
+// ✅ إطلاق تلقائي لنافذة المتصفح — بدون أي تدخل من المستخدم
+function triggerAutoInstallPrompt() {
+  if (!deferredInstallPrompt || isAppInstalled || installAttemptedThisSession) return false;
+  installAttemptedThisSession = true;
+  var prompt = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+  try {
+    prompt.prompt();
+    prompt.userChoice.then(function(choice) {
+      if (choice.outcome === 'accepted') {
+        showToast("جاري تثبيت التطبيق... انتظر لحظة");
+      }
+      updateInstallBanner();
+      if (document.getElementById('settings-screen') && document.getElementById('settings-screen').classList.contains('active')) renderSettings();
+    }).catch(function() {});
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// ✅ المحاولة التلقائية الشاملة (تكتشف الحالة وتتصرف)
+function tryAutoInstall() {
+  if (isAppInstalled) return;
+  // إذا كان المتصفح جاهزاً، أطلق النافذة تلقائياً
+  if (deferredInstallPrompt) {
+    triggerAutoInstallPrompt();
+    return;
+  }
+  // iOS — لا يوجد API، أظهر نافذة الإرشادات تلقائياً
+  if (isIOSDevice() && SafeStorage.getItem('mrq_ios_install_shown') !== '1') {
+    SafeStorage.setItem('mrq_ios_install_shown', '1');
+    setTimeout(showIosInstallModal, 500);
+  }
+}
+
+function shouldShowInstallBanner() {
+  if (isAppInstalled) return false;
+  if (isIOSDevice()) return false;
+  if (SafeStorage.getItem('mrq_install_dismissed') === '1') return false;
+  return true;
+}
+
+function updateInstallBanner() {
+  var banner = document.getElementById('install-banner');
+  if (!banner) return;
+  banner.style.display = shouldShowInstallBanner() ? 'flex' : 'none';
+}
+
+function dismissInstallBanner() {
+  var banner = document.getElementById('install-banner');
+  if (banner) banner.style.display = 'none';
+  SafeStorage.setItem('mrq_install_dismissed', '1');
+}
+
+function installApp() {
+  if (isAppInstalled) { showToast("التطبيق مثبت بالفعل على جهازك ✓"); return; }
+  // إذا كان هناك برومبت جاهز
+  if (deferredInstallPrompt) {
+    installAttemptedThisSession = false;
+    triggerAutoInstallPrompt();
+    return;
+  }
+  // iOS
+  if (isIOSDevice()) { showIosInstallModal(); return; }
+  // Android بدون برومبت
+  if (/Android/.test(navigator.userAgent || '')) {
+    showToast("انتظر لحظة... جاري تجهيز نافذة التثبيت", true);
+    // إعادة المحاولة بعد لحظة
+    setTimeout(function() {
+      if (deferredInstallPrompt) triggerAutoInstallPrompt();
+      else showToast("افتح قائمة المتصفح ⋮ واختر 'تثبيت التطبيق'", true);
+    }, 1200);
+    return;
+  }
+  // Desktop
+  showToast("جاري تجهيز نافذة التثبيت... إذا لم تظهر، اضغط أيقونة ⊕ في شريط العنوان", true);
+  setTimeout(function() { if (deferredInstallPrompt) triggerAutoInstallPrompt(); }, 800);
+}
+
+function showIosInstallModal() { showModal("ios-install-modal"); }
+function closeIosInstallModal() { hideModal("ios-install-modal"); }
+
+// ==========================================
+// 22. SERVICE WORKER
 // ==========================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
@@ -1842,7 +2014,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // ==========================================
-// 22. START
+// 23. START
 // ==========================================
 init();
 </script>
