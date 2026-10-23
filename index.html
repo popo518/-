@@ -19,7 +19,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<!-- مكتبة السحب والإفلات -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
@@ -50,20 +49,22 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .splash-next-btn { margin-top: 36px; padding: 13px 44px; border: 2px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.1); color: #fff; border-radius: 14px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
 .splash-next-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.2); }
 
-#tutorial-screen { position: absolute; inset: 0; z-index: 500; background: var(--bg); display: none; flex-direction: column; padding: 30px 24px; }
-#tutorial-screen.active { display: flex; }
-.tut-icon { width: 80px; height: 80px; border-radius: 24px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 40px auto 24px; }
-.tut-icon svg { width: 40px; height: 40px; }
-.tut-title { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 12px; }
-.tut-desc { font-size: 15px; color: var(--muted); text-align: center; line-height: 1.8; margin-bottom: 30px; }
-.tut-footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
-.tut-btn { width: 100%; padding: 15px; border-radius: var(--radius); border: none; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
-.tut-btn.primary { background: var(--primary); color: #fff; }
-.tut-btn.secondary { background: transparent; color: var(--muted); border: 1px solid var(--border-strong); }
+/* ── الدليل التفاعلي (نسخة محسّنة) ── */
+#tutorial-overlay { position: fixed; inset: 0; z-index: 9999; display: none; background: transparent; }
+#tutorial-overlay.active { display: block; }
+.tut-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; }
+.tut-spotlight { position: absolute; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); border: 2px solid #fff; transition: all 0.35s ease-out; z-index: 10000; pointer-events: none; }
+.tut-tooltip { position: fixed; background: var(--surface); border-radius: 14px; padding: 14px 16px; width: 270px; max-width: 82vw; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 10001; transition: all 0.35s ease-out; text-align: right; }
+.tut-tooltip h4 { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+.tut-tooltip p { font-size: 12.5px; color: var(--text); line-height: 1.65; font-weight: 500; }
+.tut-tooltip .tut-btns { display: flex; gap: 8px; margin-top: 12px; }
+.tut-tooltip .tut-btn { flex: 1; padding: 10px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: transform 0.1s; }
+.tut-tooltip .tut-btn:active { transform: scale(0.95); }
+.tut-tooltip .tut-btn.next { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(90, 139, 120, 0.3); flex: 2; }
+.tut-tooltip .tut-btn.skip { background: var(--surface-soft); color: var(--muted); border: 1px solid var(--border-strong); }
 
 .screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
 .screen.active { display: flex; }
-
 .header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; position: relative; z-index: 10; flex-shrink: 0; }
 .header-btn { width: 40px; height: 40px; border: none; background: transparent; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); padding: 0; }
 .header-btn svg { width: 22px; height: 22px; }
@@ -112,7 +113,6 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .install-banner-btn { padding: 9px 16px; border-radius: 10px; border: none; background: #fff; color: #4a7562; font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
 .install-banner-close { position: absolute; top: 6px; left: 6px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.2); border: none; color: #fff; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1; }
 
-/* ── الميزات الجديدة ── */
 .prayer-widget { background: linear-gradient(135deg, #4a7562 0%, #2b3d33 100%); border-radius: 16px; padding: 16px; margin-bottom: 12px; color: #fff; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); }
 .prayer-info { text-align: right; }
 .prayer-title { font-size: 13px; opacity: 0.8; }
@@ -261,7 +261,6 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .color-swatch { width: 32px; height: 32px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; padding: 0; }
 .color-swatch.active { border-color: var(--text); box-shadow: 0 0 0 2px var(--surface); }
 
-/* تصميم السجل الجديد */
 .hist-summary { background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); text-align: center; box-shadow: var(--shadow-sm); }
 .hist-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 100px; margin-top: 20px; gap: 6px; }
 .chart-bar { flex: 1; background: var(--surface-soft); border-radius: 6px 6px 0 0; position: relative; transition: height 0.3s; min-height: 4px; overflow: hidden; display: flex; align-items: flex-end; }
@@ -280,6 +279,16 @@ body { display: flex; justify-content: center; align-items: stretch; }
 
 .hist-back-btn { display: none; }
 .hist-back-btn.show { display: flex; }
+
+/* ── بطاقة ملاحظات اليوم (جديدة) ── */
+.day-note-card { background: var(--surface-warm); border: 1px solid var(--border-strong); border-radius: 14px; padding: 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: var(--shadow-sm); }
+.day-note-card:active { transform: scale(0.99); }
+.day-note-icon { width: 40px; height: 40px; border-radius: 11px; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.day-note-body { flex: 1; min-width: 0; }
+.day-note-title { font-size: 13.5px; font-weight: 700; color: var(--primary-dark); }
+.day-note-preview { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.day-note-preview.empty { color: var(--faint); font-style: italic; }
+.day-note-arrow { color: var(--faint); font-size: 22px; line-height: 1; flex-shrink: 0; }
 
 .hist-cat-card { background: var(--surface); border-radius: 14px; padding: 14px; margin-bottom: 10px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .hist-cat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; }
@@ -325,15 +334,7 @@ a.settings-item { text-decoration: none; color: inherit; }
     <button class="splash-next-btn" onclick="document.getElementById('splash-screen').style.display='none'">التالي ›</button>
   </div>
 
-  <div id="tutorial-screen">
-    <div class="tut-icon" id="tut-icon"></div>
-    <div class="tut-title" id="tut-title"></div>
-    <div class="tut-desc" id="tut-desc"></div>
-    <div class="tut-footer">
-      <button class="tut-btn primary" id="tut-btn-next" onclick="tutorialNext()">التالي</button>
-      <button class="tut-btn secondary" onclick="skipTutorial()">تخطي الدليل</button>
-    </div>
-  </div>
+  <div id="tutorial-overlay"></div>
 
   <div class="screen" id="auth-screen">
     <div class="auth-box">
@@ -373,8 +374,7 @@ a.settings-item { text-decoration: none; color: inherit; }
         <div class="guest-banner-body"><div class="guest-banner-title">أنت تستخدم حساب ضيف</div><div class="guest-banner-desc">أنشئ حساباً سحابياً لفتح بياناتك على أي جهاز</div></div>
         <button class="guest-banner-btn" onclick="showSignupForGuest()">سجّل الآن</button>
       </div>
-      
-      <!-- مواقيت الصلاة -->
+
       <div class="prayer-widget" id="prayer-widget" style="display:none;">
         <div class="prayer-info">
           <div class="prayer-title">الصلاة القادمة</div>
@@ -383,7 +383,6 @@ a.settings-item { text-decoration: none; color: inherit; }
         <div class="prayer-next" id="prayer-time">—</div>
       </div>
 
-      <!-- السلاسل -->
       <div class="streak-widget" id="streak-widget" style="display:none;">
         <span style="font-size:20px;">🔥</span>
         <span>سلسلة الإنجاز: <span id="streak-count">0</span> أيام</span>
@@ -404,7 +403,7 @@ a.settings-item { text-decoration: none; color: inherit; }
         </div>
         <button class="install-banner-btn" type="button">تثبيت</button>
       </div>
-      <button class="add-prominent-btn" onclick="openCategoryModal()">
+      <button class="add-prominent-btn" id="btn-add-cat" onclick="openCategoryModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         إضافة قائمة جديدة
       </button>
@@ -478,6 +477,25 @@ a.settings-item { text-decoration: none; color: inherit; }
   </div>
 
   <div class="overlay" id="overlay" onclick="closeAllModals()"></div>
+
+  <!-- ملاحظات اليوم (بدل note-modal القديم) -->
+  <div class="modal" id="day-note-modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2>ملاحظات اليوم</h2>
+      <button class="modal-close" onclick="closeDayNoteModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label class="form-label">اكتب ملاحظاتك عن هذا اليوم — ماذا أنجزت؟ بماذا شعرت؟ أي دروس مستفادة؟</label>
+        <textarea class="form-textarea" id="day-note-input" placeholder="مثال: الحمد لله، صليت الفجر في المسجد، قرأت صفحتين من القرآن، شعرت براحة..." rows="6"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" onclick="closeDayNoteModal()">إلغاء</button>
+      <button class="btn btn-save" onclick="saveDayNote()">حفظ</button>
+    </div>
+  </div>
 
   <div class="modal" id="task-modal">
     <div class="modal-handle"></div>
@@ -562,35 +580,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <div class="modal" id="time-modal" style="z-index: 110;">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h2>وقت التذكير</h2>
-      <button class="modal-close" onclick="closeTimePicker()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-field">
-        <label class="form-label">الفترة</label>
-        <div class="chips" id="period-chips">
-          <button class="chip active" onclick="setPeriod('ص')">صباحاً</button>
-          <button class="chip" onclick="setPeriod('م')">مساءً</button>
-        </div>
-      </div>
-      <div class="form-field">
-        <label class="form-label">الساعة</label>
-        <div id="hour-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;"></div>
-      </div>
-      <div class="form-field">
-        <label class="form-label">الدقيقة</label>
-        <div id="minute-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-cancel" onclick="closeTimePicker()">إلغاء</button>
-      <button class="btn btn-save" onclick="confirmTime()">إضافة</button>
-    </div>
-  </div>
-
   <div class="modal" id="ios-install-modal" style="z-index: 115;">
     <div class="modal-handle"></div>
     <div class="modal-header">
@@ -661,7 +650,7 @@ var SafeStorage = {
 };
 
 var cloudUser = null;
-var cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false, lastOpen: "", displayName: "" };
+var cloudData = { tasks: [], categories: [], dailySnapshots: {}, dayNotes: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false, lastOpen: "", displayName: "" };
 var cloudSaveTimer = null;
 
 function scheduleCloudSave() {
@@ -670,7 +659,8 @@ function scheduleCloudSave() {
   cloudSaveTimer = setTimeout(function() {
     firebase.firestore().collection('users').doc(cloudUser.uid).set({
       tasks: cloudData.tasks, categories: cloudData.categories,
-      dailySnapshots: cloudData.dailySnapshots, settings: cloudData.settings,
+      dailySnapshots: cloudData.dailySnapshots, dayNotes: cloudData.dayNotes,
+      settings: cloudData.settings,
       streak: cloudData.streak, lastStreakDate: cloudData.lastStreakDate,
       prayersAdded: cloudData.prayersAdded, lastOpen: cloudData.lastOpen,
       displayName: cloudData.displayName || ''
@@ -814,19 +804,21 @@ function handleAuth(ev) {
           var wasGuest = SafeStorage.getItem("mrq_currentUser");
           var backup = null;
           if (wasGuest && isGuestUser(wasGuest)) {
-            backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), dailySnapshots: loadUserData("dailySnapshots", null), settings: loadUserData("settings", null), streak: loadUserData("streak", 0), lastStreakDate: loadUserData("lastStreakDate", "") };
+            backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), dailySnapshots: loadUserData("dailySnapshots", null), dayNotes: loadUserData("dayNotes", null), settings: loadUserData("settings", null), streak: loadUserData("streak", 0), lastStreakDate: loadUserData("lastStreakDate", "") };
           }
-          cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false, displayName: name };
+          cloudData = { tasks: [], categories: [], dailySnapshots: {}, dayNotes: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false, displayName: name };
           if (backup && backup.tasks) {
             cloudData.tasks = backup.tasks; cloudData.categories = backup.categories || [];
-            cloudData.dailySnapshots = backup.dailySnapshots || {}; cloudData.settings = backup.settings || {};
+            cloudData.dailySnapshots = backup.dailySnapshots || {}; cloudData.dayNotes = backup.dayNotes || {};
+            cloudData.settings = backup.settings || {};
             cloudData.streak = backup.streak || 0; cloudData.lastStreakDate = backup.lastStreakDate || "";
             cloudData.prayersAdded = true;
           }
           return firebase.firestore().collection('users').doc(u.uid).set({
             displayName: name, email: username,
             tasks: cloudData.tasks, categories: cloudData.categories,
-            dailySnapshots: cloudData.dailySnapshots, settings: cloudData.settings,
+            dailySnapshots: cloudData.dailySnapshots, dayNotes: cloudData.dayNotes,
+            settings: cloudData.settings,
             streak: cloudData.streak, lastStreakDate: cloudData.lastStreakDate,
             prayersAdded: cloudData.prayersAdded, createdAt: Date.now()
           });
@@ -846,7 +838,7 @@ function handleAuth(ev) {
         .then(function(doc) {
           if (doc && doc.exists) {
             var d = doc.data();
-            cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, settings: d.settings || {}, streak: d.streak || 0, lastStreakDate: d.lastStreakDate || "", prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
+            cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, dayNotes: d.dayNotes || {}, settings: d.settings || {}, streak: d.streak || 0, lastStreakDate: d.lastStreakDate || "", prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
           }
           btn.disabled = false; enterApp();
         })
@@ -865,7 +857,7 @@ function handleAuth(ev) {
     var prev = SafeStorage.getItem("mrq_currentUser");
     var wasGuest = isGuestUser(prev);
     var backup = null;
-    if (wasGuest && prev) backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), snapshots: loadUserData("dailySnapshots", null), settings: loadUserData("settings", null), streak: loadUserData("streak", 0), lastStreakDate: loadUserData("lastStreakDate", "") };
+    if (wasGuest && prev) backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), snapshots: loadUserData("dailySnapshots", null), dayNotes: loadUserData("dayNotes", null), settings: loadUserData("settings", null), streak: loadUserData("streak", 0), lastStreakDate: loadUserData("lastStreakDate", "") };
     if (authMode === "signup") {
       if (users[username]) { showAuthError("اسم المستخدم موجود"); return; }
       users[username] = { password: simpleHash(password), displayName: displayName || username, createdAt: Date.now() };
@@ -874,6 +866,7 @@ function handleAuth(ev) {
         if (backup.tasks !== null) saveUserData("tasks", backup.tasks);
         if (backup.categories !== null) saveUserData("categories", backup.categories);
         if (backup.snapshots !== null) saveUserData("dailySnapshots", backup.snapshots);
+        if (backup.dayNotes !== null) saveUserData("dayNotes", backup.dayNotes);
         if (backup.settings !== null) saveUserData("settings", backup.settings);
         if (backup.streak !== undefined) saveUserData("streak", backup.streak);
         if (backup.lastStreakDate !== undefined) saveUserData("lastStreakDate", backup.lastStreakDate);
@@ -909,7 +902,7 @@ function cancelGuestUpgrade() { document.getElementById("guest-back-btn").style.
 function logout() {
   if (!confirm("تسجيل الخروج؟")) return;
   if (CLOUD_ENABLED && cloudUser) {
-    firebase.auth().signOut().then(function() { cloudUser = null; cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false }; setCurrentUser(null); showScreen("auth"); });
+    firebase.auth().signOut().then(function() { cloudUser = null; cloudData = { tasks: [], categories: [], dailySnapshots: {}, dayNotes: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false }; setCurrentUser(null); showScreen("auth"); });
   } else {
     setCurrentUser(null);
     document.getElementById("auth-username").value = "";
@@ -945,7 +938,8 @@ var ICONS = {
   arrow: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><polyline points='15 18 9 12 15 6'/></svg>",
   cloud: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z'/></svg>",
   apps: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><rect x='3' y='3' width='7' height='7' rx='1.5'/><rect x='14' y='3' width='7' height='7' rx='1.5'/><rect x='3' y='14' width='7' height='7' rx='1.5'/><rect x='14' y='14' width='7' height='7' rx='1.5'/></svg>",
-  install: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2'><path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' y1='15' x2='12' y2='3'/></svg>"
+  install: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2'><path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' y1='15' x2='12' y2='3'/></svg>",
+  info: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/></svg>"
 };
 
 var PRESET_CATEGORIES = [
@@ -994,8 +988,10 @@ var formTimes = [];
 var editorGroups = [];
 var historyState = { view: "days", selectedDate: null, selectedCatId: null };
 var tutStep = 0;
+var tutorialActive = false;
 var selectedPresetCat = null;
 var selectedCatColor = null;
+var editingDayNoteDate = null;
 
 // ==========================================
 // 6. INIT
@@ -1009,7 +1005,7 @@ function init() {
           .then(function(doc) {
             if (doc.exists) {
               var d = doc.data();
-              cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, settings: d.settings || {}, streak: d.streak || 0, lastStreakDate: d.lastStreakDate || "", prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
+              cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, dayNotes: d.dayNotes || {}, settings: d.settings || {}, streak: d.streak || 0, lastStreakDate: d.lastStreakDate || "", prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
             }
             enterApp();
             startCloudSync();
@@ -1035,7 +1031,8 @@ function startCloudSync() {
     if (doc.metadata && doc.metadata.hasPendingWrites) return;
     var d = doc.data();
     cloudData.tasks = d.tasks || []; cloudData.categories = d.categories || [];
-    cloudData.dailySnapshots = d.dailySnapshots || {}; cloudData.settings = d.settings || {};
+    cloudData.dailySnapshots = d.dailySnapshots || {}; cloudData.dayNotes = d.dayNotes || {};
+    cloudData.settings = d.settings || {};
     cloudData.streak = d.streak || 0; cloudData.lastStreakDate = d.lastStreakDate || "";
     cloudData.prayersAdded = d.prayersAdded || false;
     try {
@@ -1073,7 +1070,7 @@ function enterApp() {
     migrateToSections();
     ensureDefaultPrayers();
 
-    var msg = autoSnapshot();
+    autoSnapshot();
     resetDailyTasks();
     updateStreakOnOpen();
 
@@ -1092,9 +1089,9 @@ function enterApp() {
 
     fetchPrayerTimes();
     goHome();
-    
+
     var s = loadSettings();
-    if (!s.tutorialDone) setTimeout(startTutorial, 500);
+    if (!s.tutorialDone) setTimeout(startTutorialWhenReady, 800);
 
     setTimeout(tryAutoInstall, 2200);
   } catch (err) {
@@ -1183,26 +1180,285 @@ function ensureDefaultPrayers() {
 }
 
 // ==========================================
-// 8. TUTORIAL
+// 8. TUTORIAL (نسخة مطوّلة — تشرح كل جزء)
 // ==========================================
-var TUT_STEPS = [
-  { title: "أهلاً بك في مِرْقاة", desc: "التطبيق يساعدك على تنظيم مهامك اليومية ومتابعة إنجازك يوماً بيوم.", icon: ICONS.cloud },
-  { title: "القوائم", desc: "لديك قوائم جاهزة. يمكنك إضافة قوائم جديدة من الزر الكبير أعلى الشاشة.", icon: ICONS.apps },
-  { title: "الأصناف", desc: "كل قائمة تحتوي أصنافاً. مثلاً داخل (دينية) يوجد صنف (الصلاة).", icon: ICONS.check },
-  { title: "المزامنة السحابية", desc: "أنشئ حساباً سحابياً بالبريد لتفتح مهامك على أي جهاز.", icon: ICONS.cloud },
-  { title: "التسجيل التلقائي", desc: "في نهاية اليوم، يسجل التطبيق إنجازك تلقائياً في شاشة السجل.", icon: "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><circle cx='12' cy='12' r='10'/><polyline points='12 6 12 12 16 14'/></svg>" }
-];
-function startTutorial() { tutStep = 0; document.getElementById("tutorial-screen").classList.add("active"); renderTutStep(); }
-function renderTutStep() {
-  var s = TUT_STEPS[tutStep];
-  document.getElementById("tut-icon").innerHTML = s.icon;
-  document.getElementById("tut-title").textContent = s.title;
-  document.getElementById("tut-desc").textContent = s.desc;
-  document.getElementById("tut-btn-next").textContent = tutStep === TUT_STEPS.length - 1 ? "ابدأ استخدام التطبيق" : "التالي";
+function isSplashVisible() {
+  var s = document.getElementById("splash-screen");
+  if (!s) return false;
+  return getComputedStyle(s).display !== "none";
 }
-function tutorialNext() { tutStep++; if (tutStep >= TUT_STEPS.length) finishTutorial(); else renderTutStep(); }
-function skipTutorial() { finishTutorial(); }
-function finishTutorial() { document.getElementById("tutorial-screen").classList.remove("active"); var s = loadSettings(); s.tutorialDone = true; saveSettings(s); }
+
+function startTutorialWhenReady() {
+  if (isSplashVisible()) { setTimeout(startTutorialWhenReady, 300); return; }
+  if (!document.getElementById("home-screen").classList.contains("active")) { setTimeout(startTutorialWhenReady, 300); return; }
+  startTutorial();
+}
+
+function findFirstCategoryWithTasks() {
+  for (var i = 0; i < currentCategories.length; i++) {
+    var c = currentCategories[i];
+    if (currentTasks.some(function(t){ return t.cat === c.id; })) return c;
+  }
+  return currentCategories[0] || null;
+}
+function findFirstSectionWithTasks(cat) {
+  if (!cat || !cat.sections) return null;
+  for (var i = 0; i < cat.sections.length; i++) {
+    var s = cat.sections[i];
+    if (currentTasks.some(function(t){ return t.cat === cat.id && t.section === s.id; })) return s;
+  }
+  return cat.sections[0] || null;
+}
+
+var TUT_STEPS = [
+  {
+    title: "مرحباً بك في مِرْقاة 👋",
+    text: "مِرْقاة تطبيق عربي لتنظيم مهامك اليومية ومتابعة إنجازك. سيرشدك هذا الدليل خطوة بخطوة إلى كل أجزاء التطبيق. اضغط (التالي) للبدء.",
+    selector: null, position: "center"
+  },
+  {
+    title: "شريط الترحيب",
+    text: "يعرض الترحيب حسب وقت اليوم (صباح الخير / مساء النور...)، والزر في أقصى اليسار هو صورتك — اضغطه للوصول السريع إلى الإعدادات.",
+    selector: "#home-avatar", position: "bottom"
+  },
+  {
+    title: "مواقيت الصلاة 🕌",
+    text: "عند السماح بالوصول لموقعك، يظهر هنا اسم الصلاة القادمة ووقتها حسب موقعك الجغرافي (الفجر، الظهر، العصر، المغرب، العشاء).",
+    selector: "#prayer-widget", position: "bottom"
+  },
+  {
+    title: "سلسلة الإنجاز 🔥",
+    text: "عند إنجاز أي مهمة في اليوم، تزيد السلسلة يوماً. تنكسر السلسلة إذا مرّ يوم كامل بدون أي إنجاز. حافظ عليها لتبقى متحفزاً!",
+    selector: "#streak-widget", position: "bottom"
+  },
+  {
+    title: "إضافة قائمة جديدة",
+    text: "اضغط هنا لإنشاء قائمة جديدة (مثل: دينية، رياضة، عمل، دراسة). ستختار من قوالب جاهزة أو تصنع قائمتك بنفسك مع لون وأيقونة.",
+    selector: "#btn-add-cat", position: "bottom"
+  },
+  {
+    title: "بطاقات القوائم",
+    text: "كل بطاقة تمثل قائمة. تعرض: الأيقونة، الاسم، عدد المهام النشطة، عدد الأصناف، وشريط تقدم يبين نسبة الإنجاز في هذه القائمة.",
+    selector: "#home-lists", position: "bottom"
+  },
+  {
+    title: "حذف قائمة",
+    text: "الزر × في أعلى كل بطاقة. اضغطه مرة ليصبح (؟) للتأكيد، ثم اضغط مرة أخرى خلال 3 ثوانٍ للحذف النهائي. هذا يمنع الحذف بالخطأ.",
+    selector: "#home-lists .cat-delete-x", fallbackSelector: "#home-lists", position: "bottom"
+  },
+  {
+    title: "شريط التنقل السفلي",
+    text: "ثلاثة أزرار: (القوائم) للصفحة الرئيسية، (السجل) لمتابعة إنجازك اليومي، (الإعدادات) للتحكم بالتطبيق والتنبيهات.",
+    selector: "#nav-home", position: "top"
+  },
+  {
+    title: "سجل الإنجاز 📊",
+    text: "هنا ترى رسم بياني لأدائك في آخر 7 أيام، وبطاقات لكل يوم مسجل بنسبة إنجازه. اضغط أي يوم لرؤية تفاصيل إنجازك فيه.",
+    selector: ".hist-summary", fallbackSelector: "#history-content",
+    position: "bottom", action: "goHistory"
+  },
+  {
+    title: "ملاحظات اليوم 📝",
+    text: "بعد فتح اليوم، تجد بطاقة (ملاحظات اليوم) في الأعلى. اضغط عليها لتكتب ماذا أنجزت، بماذا شعرت، وأي دروس مستفادة — هذه ملاحظاتك اليومية العامة وليست مرتبطة بمهمة معينة.",
+    selector: ".day-note-card", fallbackSelector: "#history-content",
+    position: "bottom", action: "openTodayHistory"
+  },
+  {
+    title: "قائمة القوائم",
+    text: "ارجع للرئيسية، واضغط على أي قائمة لفتحها. القائمة تحتوي على أصناف (مثل: قسم الصلاة، قسم الأذكار) لتنظيم المهام داخلها.",
+    selector: "#home-lists", position: "bottom", action: "goHome"
+  },
+  {
+    title: "داخل القائمة: الأصناف",
+    text: "كل صنف يعرض عدد المهام المنجزة. اضغط + في الأعلى لإضافة صنف جديد، أو اضغط أي صنف لعرض مهامه.",
+    selector: "#sections-list", fallbackSelector: "#sections-title",
+    position: "bottom", action: "openFirstCategory"
+  },
+  {
+    title: "المهام داخل الصنف",
+    text: "كل مهمة تعرض: مربع الإنجاز، شريط الأولوية (أحمر=عالية، برتقالي=متوسطة، أخضر=منخفضة)، الخيارات إن وُجدت، أوقات التذكير، وشريط التقدم.",
+    selector: "#tasks-list .task", fallbackSelector: "#tasks-list",
+    position: "bottom", action: "openFirstSection"
+  },
+  {
+    title: "إنجاز المهمة ✅",
+    text: "اضغط المربع المجاور للمهمة لتأكيد إنجازها. ستصدر نغمة، ويزيد عدّاد السلسلة 🔥. اضغط مرة أخرى لإلغاء الإنجاز.",
+    selector: "#tasks-list .task .check", fallbackSelector: "#tasks-list",
+    position: "bottom"
+  },
+  {
+    title: "تعديل / حذف / ترتيب",
+    text: "استخدم زر القلم ✏️ لتعديل المهمة، وزر السلة 🗑️ للحذف (بضغطتين للتأكيد). اسحب من المقبض ⋮⋮ لإعادة ترتيب المهام داخل الصنف.",
+    selector: "#tasks-list .task .task-actions", fallbackSelector: "#tasks-list",
+    position: "bottom"
+  },
+  {
+    title: "إضافة مهمة جديدة",
+    text: "اضغط + في الأعلى لإضافة مهمة جديدة: عنوان، أولوية، تكرار (يومي أو لمرة واحدة)، وقت تذكير، خيارات متعددة، هدف رقمي (مثل: 5 صفحات)، وملاحظات.",
+    selector: "#tasks-screen .add-prominent-btn", position: "bottom"
+  },
+  {
+    title: "الإعدادات ⚙️",
+    text: "من هنا يمكنك: تثبيت التطبيق على جهازك، تفعيل الأصوات والاهتزاز، طلب صلاحية التنبيهات، إنشاء حساب سحابي لمزامنة بياناتك، وإعادة عرض هذا الدليل لاحقاً.",
+    selector: "#settings-content", position: "bottom", action: "goSettings"
+  },
+  {
+    title: "انتهت الجولة 🎉",
+    text: "أنت الآن جاهز لاستخدام مِرْقاة. ابدأ بإضافة مهامك اليومية، حافظ على سلسلة إنجازك 🔥، واكتب ملاحظاتك اليومية في السجل. وفقك الله!",
+    selector: null, position: "center", action: "goHome"
+  }
+];
+
+function runTutAction(name) {
+  if (!name) return;
+  try {
+    if (name === "goHome") goHome();
+    else if (name === "goHistory") goToHistory();
+    else if (name === "goSettings") goToSettings();
+    else if (name === "openTodayHistory") {
+      if (!document.getElementById("history-screen").classList.contains("active")) goToHistory();
+      historyState.view = "categories";
+      historyState.selectedDate = getTodayStr();
+      historyState.selectedCatId = null;
+      renderHistory();
+    }
+    else if (name === "openFirstCategory") {
+      var cat = findFirstCategoryWithTasks();
+      if (cat) openCategory(cat.id);
+    }
+    else if (name === "openFirstSection") {
+      var cat2 = currentCategories.filter(function(c){ return c.id === currentCategoryId; })[0];
+      if (cat2) {
+        var sec = findFirstSectionWithTasks(cat2);
+        if (sec) openSection(sec.id);
+      }
+    }
+  } catch (e) { console.warn("Tutorial action failed:", e); }
+}
+
+function startTutorial() {
+  if (tutorialActive) return;
+  tutorialActive = true;
+  tutStep = 0;
+  var overlay = document.getElementById("tutorial-overlay");
+  overlay.innerHTML = "";
+  overlay.classList.add("active");
+  renderTutStep();
+}
+
+function renderTutStep() {
+  var overlay = document.getElementById("tutorial-overlay");
+  overlay.innerHTML = "";
+
+  if (tutStep >= TUT_STEPS.length) {
+    endTutorial();
+    return;
+  }
+
+  var step = TUT_STEPS[tutStep];
+
+  if (step.action) runTutAction(step.action);
+
+  setTimeout(function() {
+    if (!tutorialActive) return;
+
+    var targetEl = null;
+    if (step.selector) {
+      try { targetEl = document.querySelector(step.selector); } catch(e) {}
+    }
+    if (!targetEl && step.fallbackSelector) {
+      try { targetEl = document.querySelector(step.fallbackSelector); } catch(e) {}
+    }
+    if (targetEl && (targetEl.offsetWidth === 0 || targetEl.offsetHeight === 0)) {
+      // عنصر مخفي — نعرض الشرح بالمنتصف بدون إبراز
+      targetEl = null;
+    }
+
+    // الخلفية المعتمة
+    var backdrop = document.createElement("div");
+    backdrop.className = "tut-backdrop";
+    overlay.appendChild(backdrop);
+
+    // إبراز العنصر المستهدف
+    if (targetEl) {
+      var rect = targetEl.getBoundingClientRect();
+      var spot = document.createElement("div");
+      spot.className = "tut-spotlight";
+      spot.style.top = (rect.top - 6) + "px";
+      spot.style.left = (rect.left - 6) + "px";
+      spot.style.width = (rect.width + 12) + "px";
+      spot.style.height = (rect.height + 12) + "px";
+      overlay.appendChild(spot);
+    }
+
+    // صندوق الشرح (صغير)
+    var tip = document.createElement("div");
+    tip.className = "tut-tooltip";
+    tip.innerHTML =
+      '<h4>' + step.title + '</h4>' +
+      '<p>' + step.text + '</p>' +
+      '<div class="tut-btns">' +
+        '<button class="tut-btn skip" onclick="skipTutorial()">تخطي</button>' +
+        '<button class="tut-btn next" onclick="tutorialNext()">' +
+          (tutStep === TUT_STEPS.length - 1 ? "إنهاء الجولة" : "التالي") +
+        '</button>' +
+      '</div>';
+    overlay.appendChild(tip);
+
+    setTimeout(function() {
+      if (!targetEl) {
+        tip.style.top = "50%";
+        tip.style.left = "50%";
+        tip.style.transform = "translate(-50%, -50%)";
+      } else {
+        var tRect = targetEl.getBoundingClientRect();
+        var tipH = tip.offsetHeight, tipW = tip.offsetWidth;
+        var vw = window.innerWidth, vh = window.innerHeight;
+        var pos = step.position || "bottom";
+        var topPos;
+
+        if (pos === "top") topPos = tRect.top - tipH - 12;
+        else if (pos === "center") topPos = (vh - tipH) / 2;
+        else topPos = tRect.bottom + 12;
+
+        if (topPos + tipH > vh - 12) topPos = tRect.top - tipH - 12;
+        if (topPos < 12) topPos = tRect.bottom + 12;
+        if (topPos < 12) topPos = (vh - tipH) / 2;
+
+        var leftPos = tRect.left + (tRect.width / 2) - (tipW / 2);
+        if (leftPos < 12) leftPos = 12;
+        if (leftPos + tipW > vw - 12) leftPos = vw - tipW - 12;
+
+        tip.style.top = topPos + "px";
+        tip.style.left = leftPos + "px";
+      }
+    }, 30);
+
+  }, 350);
+}
+
+function tutorialNext() {
+  tutStep++;
+  renderTutStep();
+}
+function skipTutorial() { endTutorial(); }
+
+function endTutorial() {
+  tutorialActive = false;
+  var overlay = document.getElementById("tutorial-overlay");
+  overlay.classList.remove("active");
+  overlay.innerHTML = "";
+  var s = loadSettings(); s.tutorialDone = true; saveSettings(s);
+  goHome();
+}
+
+function restartTutorial() {
+  var s = loadSettings(); s.tutorialDone = false; saveSettings(s);
+  goHome();
+  setTimeout(function() {
+    if (!isSplashVisible()) startTutorial();
+  }, 400);
+}
 
 // ==========================================
 // 9. AUTO SNAPSHOT + RESET
@@ -1232,7 +1488,6 @@ function autoSnapshot() {
     return;
   }
   setUserMeta("lastOpen", today);
-  return null;
 }
 
 function resetDailyTasks() {
@@ -1257,16 +1512,10 @@ function updateStreakOnOpen() {
   var lastDate = loadUserData("lastStreakDate", "");
   var streak = loadUserData("streak", 0);
   var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-  
-  if (lastDate === today) {
-    // Already updated today
-  } else if (lastDate === yesterday.toDateString()) {
-    // Keep streak
-  } else if (lastDate !== "") {
-    // Broken streak
-    streak = 0;
-    saveUserData("streak", 0);
-  }
+
+  if (lastDate === today) { /* already updated */ }
+  else if (lastDate === yesterday.toDateString()) { /* keep streak */ }
+  else if (lastDate !== "") { streak = 0; saveUserData("streak", 0); }
   saveUserData("lastStreakDate", today);
   document.getElementById("streak-count").textContent = streak;
   document.getElementById("streak-widget").style.display = streak > 0 ? "flex" : "none";
@@ -1470,7 +1719,7 @@ function renderTasks() {
   document.getElementById("tasks-title").textContent = sec ? sec.name : (cat ? cat.name : "المهام");
 
   var tasks = currentTasks.filter(function(t){ return t.cat === currentCategoryId && t.section === currentSectionId; });
-  
+
   tasks.sort(function(a, b) {
     var pMap = { high: 1, medium: 2, low: 3 };
     var pA = pMap[a.priority || 'medium'];
@@ -1488,7 +1737,7 @@ function renderTasks() {
     if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
     return;
   }
-  
+
   var html = "";
   tasks.forEach(function(t, idx) { html += buildTaskHTML(t, idx); });
   listEl.innerHTML = html;
@@ -1513,7 +1762,7 @@ function buildTaskHTML(t, idx) {
   var cat = currentCategories.filter(function(c){ return c.id === t.cat; })[0] || { color: "#888" };
   var dark = darken(cat.color, 0.22);
   var vars = "--task-color:" + cat.color + ";--task-dark:" + dark + ";--task-tint:" + hexToRgba(cat.color, 0.08) + ";--task-border:" + hexToRgba(cat.color, 0.18) + ";--task-border-strong:" + hexToRgba(cat.color, 0.35) + ";";
-  
+
   var p = t.priority || 'medium';
   var pColor = p === 'high' ? '#c85a54' : (p === 'low' ? '#5a8b78' : '#d99a6c');
   var pBorder = "border-right: 4px solid " + pColor + ";";
@@ -1587,10 +1836,10 @@ function selectGroupOption(taskId, gi, oi, ev) {
   var label = g.options[oi];
   if (g.selected === label) g.selected = null; else g.selected = label;
   var any = t.optionGroups.some(function(x){ return !!x.selected; });
-  if (any && !t.done) { 
-    t.done = true; t.completedAt = Date.now(); 
+  if (any && !t.done) {
+    t.done = true; t.completedAt = Date.now();
     checkStreakOnCompletion();
-    playSound("complete"); vibrate(25); 
+    playSound("complete"); vibrate(25);
   }
   else if (!any && t.done) { t.done = false; t.completedAt = null; playSound("tap"); }
   else { playSound("tap"); vibrate(8); }
@@ -1601,10 +1850,10 @@ function adjustProgress(id, delta, ev) {
   if (ev) ev.stopPropagation();
   var t = findTask(id); if (!t || !t.hasQty) return;
   t.current = Math.max(0, Math.min(t.target, (t.current || 0) + delta));
-  if (t.current >= t.target && !t.done) { 
-    t.done = true; t.completedAt = Date.now(); 
+  if (t.current >= t.target && !t.done) {
+    t.done = true; t.completedAt = Date.now();
     checkStreakOnCompletion();
-    playSound("complete"); vibrate(25); 
+    playSound("complete"); vibrate(25);
   }
   else { playSound("tap"); vibrate(8); }
   saveTasks(); renderTasks();
@@ -1741,32 +1990,7 @@ function saveTask() {
 function closeTaskModal() { hideModal("task-modal"); editingTaskId = null; }
 
 // ==========================================
-// 16. TIME PICKER
-// ==========================================
-var pickerHour = 12, pickerMinute = "00", pickerPeriod = "ص";
-function openTimePicker() { showModal("time-modal"); renderTimeGrids(); }
-function closeTimePicker() { hideModal("time-modal"); }
-function renderTimeGrids() {
-  var hHtml = "", mHtml = "";
-  for (var i = 1; i <= 12; i++) hHtml += "<div class='time-grid-item' style='padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:13px; font-weight:600; " + (pickerHour === i ? "background:var(--primary); color:#fff;" : "background:var(--surface-soft); color:var(--text);") + "' onclick='setHour(" + i + ")'>" + i + "</div>";
-  ["00","15","30","45"].forEach(function(m) { mHtml += "<div class='time-grid-item' style='padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:13px; font-weight:600; " + (pickerMinute === m ? "background:var(--primary); color:#fff;" : "background:var(--surface-soft); color:var(--text);") + "' onclick='setMinute(\"" + m + "\")'>" + m + "</div>"; });
-  document.getElementById("hour-grid").innerHTML = hHtml;
-  document.getElementById("minute-grid").innerHTML = mHtml;
-  var pChips = document.querySelectorAll("#period-chips .chip");
-  if (pChips.length >= 2) { pChips[0].classList.toggle("active", pickerPeriod === "ص"); pChips[1].classList.toggle("active", pickerPeriod === "م"); }
-}
-function setHour(h) { pickerHour = h; renderTimeGrids(); }
-function setMinute(m) { pickerMinute = m; renderTimeGrids(); }
-function setPeriod(p) { pickerPeriod = p; renderTimeGrids(); }
-function confirmTime() {
-  var hh = pickerHour < 10 ? "0" + pickerHour : pickerHour;
-  var str = hh + ":" + pickerMinute + " " + pickerPeriod;
-  if (formTimes.indexOf(str) === -1) formTimes.push(str);
-  renderTimesEditor(); closeTimePicker(); playSound("add");
-}
-
-// ==========================================
-// 17. MODAL CONTROL
+// 16. MODAL CONTROL + DAILY NOTES
 // ==========================================
 function showModal(id) { document.getElementById("overlay").classList.add("show"); document.getElementById(id).classList.add("show"); }
 function hideModal(id) {
@@ -1777,10 +2001,34 @@ function closeAllModals() {
   document.querySelectorAll(".modal.show").forEach(function(m){ m.classList.remove("show"); });
   document.getElementById("overlay").classList.remove("show");
   editingTaskId = null;
+  editingDayNoteDate = null;
+}
+
+function openDayNoteModal(dateStr) {
+  editingDayNoteDate = dateStr;
+  var notes = loadUserData("dayNotes", {}) || {};
+  document.getElementById("day-note-input").value = notes[dateStr] || "";
+  showModal("day-note-modal");
+  setTimeout(function(){ document.getElementById("day-note-input").focus(); }, 320);
+}
+function closeDayNoteModal() {
+  hideModal("day-note-modal");
+  editingDayNoteDate = null;
+}
+function saveDayNote() {
+  if (!editingDayNoteDate) return;
+  var note = document.getElementById("day-note-input").value.trim();
+  var notes = loadUserData("dayNotes", {}) || {};
+  if (note) notes[editingDayNoteDate] = note;
+  else delete notes[editingDayNoteDate];
+  saveUserData("dayNotes", notes);
+  closeDayNoteModal();
+  renderHistory();
+  playSound("add"); vibrate(15);
 }
 
 // ==========================================
-// 18. CATEGORY MODAL
+// 17. CATEGORY MODAL
 // ==========================================
 function openCategoryModal() {
   document.getElementById("cat-name-input").value = "";
@@ -1790,7 +2038,7 @@ function openCategoryModal() {
     if (currentCategories.some(function(x){ return x.id === c.id || x.name === c.name; })) return;
     html += "<button type='button' class='preset-cat-btn' onclick='pickPresetCat(\"" + c.id + "\")' id='preset-" + c.id + "'><div class='preset-cat-icon' style='background:" + c.color + "'>" + ICONS[c.icon] + "</div><span>" + c.name + "</span></button>";
   });
-  grid.innerHTML = html || "<div style='font-size:12px;color:var(--muted);grid-column:1/-1;text-align:center;padding:10px;'>أضفت كل القوائم الأساسية. اكتب اسماً مخصصاً بالأسفل.</div>";
+  grid.innerHTML = html || "<div style='font-size:12px;color:var(--muted);grid-column:1/-1;text-align:center;padding:10px;'>أضفت كل القوائم الأساسية.</div>";
   var cp = document.getElementById("cat-color-picker"); var cpHtml = "";
   CATEGORY_COLORS.forEach(function(col, i) {
     cpHtml += "<button type='button' class='color-swatch " + (i === 0 ? "active" : "") + "' style='background:" + col + "' onclick='pickColor(\"" + col + "\", this)'></button>";
@@ -1799,36 +2047,30 @@ function openCategoryModal() {
   showModal("category-modal");
 }
 function pickPresetCat(id) {
-  var c = PRESET_CATEGORIES.filter(function(x){ return x.id === id; })[0];
-  if (!c) return;
-  selectedPresetCat = c;
-  document.getElementById("cat-name-input").value = c.name;
+  var c = PRESET_CATEGORIES.filter(function(x){ return x.id === id; })[0]; if (!c) return;
+  selectedPresetCat = c; document.getElementById("cat-name-input").value = c.name;
   document.querySelectorAll(".preset-cat-btn").forEach(function(b){ b.classList.remove("selected"); });
   var el = document.getElementById("preset-" + id); if (el) el.classList.add("selected");
 }
 function pickColor(col, btn) {
   selectedCatColor = col;
   document.querySelectorAll(".color-swatch").forEach(function(b){ b.classList.remove("active"); });
-  if (btn) btn.classList.add("active");
-  selectedPresetCat = null;
+  if (btn) btn.classList.add("active"); selectedPresetCat = null;
   document.querySelectorAll(".preset-cat-btn").forEach(function(b){ b.classList.remove("selected"); });
 }
 function saveCategory() {
-  var name = document.getElementById("cat-name-input").value.trim();
-  if (!name) return;
+  var name = document.getElementById("cat-name-input").value.trim(); if (!name) return;
   if (currentCategories.some(function(c){ return c.name === name; })) return;
   var newId, color, icon;
   if (selectedPresetCat && selectedPresetCat.name === name) { newId = selectedPresetCat.id; color = selectedPresetCat.color; icon = selectedPresetCat.icon; }
   else { newId = uid("cat_"); color = selectedCatColor || CATEGORY_COLORS[0]; icon = "personal"; }
   currentCategories.push({ id: newId, name: name, icon: icon, color: color, sections: [], createdAt: Date.now() });
-  saveUserData("categories", currentCategories);
-  closeCategoryModal(); renderHome();
-  playSound("add"); vibrate(15);
+  saveUserData("categories", currentCategories); closeCategoryModal(); renderHome(); playSound("add"); vibrate(15);
 }
 function closeCategoryModal() { hideModal("category-modal"); }
 
 // ==========================================
-// 19. HISTORY REDESIGN
+// 18. HISTORY (with Daily Notes)
 // ==========================================
 function percentToGradient(pct) {
   if (pct >= 100) return "linear-gradient(135deg, #6fa88f 0%, #4a7562 100%)";
@@ -1871,7 +2113,7 @@ function renderHistory() {
     renderHistoryCategories(container);
   } else {
     var dd = getDayData(historyState.selectedDate);
-    var cat = dd ? dd.categories.filter(function(c){ return c.id === historyState.selectedCatId; })[0] : null;
+    var cat = dd && dd.categories ? dd.categories.filter(function(c){ return c.id === historyState.selectedCatId; })[0] : null;
     titleEl.textContent = cat ? cat.name : "المهام";
     subEl.textContent = formatDateLabelShort(historyState.selectedDate);
     backBtn.classList.add("show"); homeBtn.style.display = "none";
@@ -1887,13 +2129,9 @@ function renderHistoryDays(container, subEl) {
   if (today.totalTasks > 0) all.push(today);
   all.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
   subEl.textContent = all.length + " يوم مسجل";
-  
-  if (all.length === 0) { 
-    container.innerHTML = "<div class='empty'><h3>لا يوجد سجل بعد</h3><p>سيظهر هنا إنجازك بعد أول يوم</p><div class='dhikr-card'>" + getRandomDhikr() + "</div></div>"; 
-    return; 
-  }
 
-  // Chart Data (Last 7 Days)
+  if (all.length === 0) { container.innerHTML = "<div class='empty'><h3>لا يوجد سجل بعد</h3><p>سيظهر هنا إنجازك بعد أول يوم</p><div class='dhikr-card'>" + getRandomDhikr() + "</div></div>"; return; }
+
   var last7Days = [];
   for (var i = 6; i >= 0; i--) {
     var dt = new Date(); dt.setDate(dt.getDate() - i);
@@ -1903,53 +2141,60 @@ function renderHistoryDays(container, subEl) {
     var label = ["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"][dt.getDay()];
     last7Days.push({ label: label, percent: pct });
   }
-  
+
   var chartHtml = last7Days.map(function(day) {
-    return "<div style='flex:1; text-align:center;'>" +
-      "<div class='chart-bar'><div class='chart-bar-fill' style='height:" + day.percent + "%'></div></div>" +
-      "<div class='chart-label'>" + day.label + "</div>" +
-    "</div>";
+    return "<div style='flex:1; text-align:center;'><div class='chart-bar'><div class='chart-bar-fill' style='height:" + day.percent + "%'></div></div><div class='chart-label'>" + day.label + "</div></div>";
   }).join("");
 
-  var html = "<div class='hist-summary'>" +
-    "<h3 style='font-size:16px; font-weight:700;'>أداء آخر 7 أيام</h3>" +
-    "<div class='hist-chart'>" + chartHtml + "</div>" +
-  "</div>";
+  var html = "<div class='hist-summary'><h3 style='font-size:16px; font-weight:700;'>أداء آخر 7 أيام</h3><div class='hist-chart'>" + chartHtml + "</div></div>";
 
   html += all.map(function(day) {
     var pct = day.percent || 0;
     var color = pct >= 80 ? "#5a8b78" : (pct >= 50 ? "#d99a6c" : "#c85a54");
     var label = day.isToday ? "اليوم" : formatDateLabelShort(day.date);
     return "<div class='history-day-card " + (day.isToday ? "today" : "") + "' onclick='openHistoryDay(\"" + day.date + "\")'>" +
-      "<div class='circular-progress' style='background: conic-gradient(" + color + " " + pct + "%, var(--border) 0);'>" +
-        "<span>" + pct + "%</span>" +
-      "</div>" +
-      "<div class='hist-info'>" +
-        "<div class='hist-title'>" + escapeHTML(label) + "</div>" +
-        "<div class='hist-date'>" + escapeHTML(formatDateFull(day.date)) + "</div>" +
-      "</div>" +
+      "<div class='circular-progress' style='background: conic-gradient(" + color + " " + pct + "%, var(--border) 0);'><span>" + pct + "%</span></div>" +
+      "<div class='hist-info'><div class='hist-title'>" + escapeHTML(label) + "</div><div class='hist-date'>" + escapeHTML(formatDateFull(day.date)) + "</div></div>" +
       ICONS.chevron +
     "</div>";
   }).join("");
-  
+
   container.innerHTML = html;
 }
 
 function renderHistoryCategories(container) {
   var day = getDayData(historyState.selectedDate);
-  if (!day || !day.categories || day.categories.length === 0) { container.innerHTML = "<div class='empty'><h3>لا قوائم</h3></div>"; return; }
-  var html = "";
-  day.categories.forEach(function(c) {
-    var grad = percentToGradient(c.percent), dark = darken(c.color, 0.22);
-    html += "<div class='hist-cat-card' onclick='openHistoryCat(\"" + c.id + "\")'><div class='hist-cat-icon' style='background:linear-gradient(135deg," + c.color + "," + dark + ")'>" + (ICONS[c.icon] || ICONS.personal) + "</div><div class='hist-cat-info'><div class='hist-cat-name'>" + escapeHTML(c.name) + "</div><div class='hist-cat-meta'>" + c.completed + " من " + c.total + " مهام</div></div><div class='hist-cat-percent' style='background:" + grad + "'>" + c.percent + "%</div></div>";
-  });
+  var notes = loadUserData("dayNotes", {}) || {};
+  var dayNote = notes[historyState.selectedDate] || "";
+
+  var html = "<div class='day-note-card' onclick='openDayNoteModal(\"" + historyState.selectedDate + "\")'>" +
+    "<div class='day-note-icon'>📝</div>" +
+    "<div class='day-note-body'>" +
+      "<div class='day-note-title'>ملاحظات اليوم</div>" +
+      "<div class='day-note-preview" + (dayNote ? "" : " empty") + "'>" +
+        (dayNote ? escapeHTML(dayNote) : "اضغط لكتابة ملاحظاتك عن هذا اليوم...") +
+      "</div>" +
+    "</div>" +
+    "<div class='day-note-arrow'>›</div>" +
+  "</div>";
+
+  if (day && day.categories && day.categories.length > 0) {
+    day.categories.forEach(function(c) {
+      var grad = percentToGradient(c.percent), dark = darken(c.color, 0.22);
+      html += "<div class='hist-cat-card' onclick='openHistoryCat(\"" + c.id + "\")'><div class='hist-cat-icon' style='background:linear-gradient(135deg," + c.color + "," + dark + ")'>" + (ICONS[c.icon] || ICONS.personal) + "</div><div class='hist-cat-info'><div class='hist-cat-name'>" + escapeHTML(c.name) + "</div><div class='hist-cat-meta'>" + c.completed + " من " + c.total + " مهام</div></div><div class='hist-cat-percent' style='background:" + grad + "'>" + c.percent + "%</div></div>";
+    });
+  } else {
+    html += "<div class='empty' style='padding-top:24px;'><h3>لا مهام في هذا اليوم</h3><p>لكن يمكنك كتابة ملاحظاتك أعلاه</p></div>";
+  }
   container.innerHTML = html;
 }
+
 function renderHistoryTasks(container) {
   var day = getDayData(historyState.selectedDate);
-  if (!day) { container.innerHTML = ""; return; }
-  var cat = day.categories.filter(function(c){ return c.id === historyState.selectedCatId; })[0];
+  if (!day) { container.innerHTML = "<div class='empty'><h3>لا بيانات</h3></div>"; return; }
+  var cat = day.categories ? day.categories.filter(function(c){ return c.id === historyState.selectedCatId; })[0] : null;
   if (!cat || !cat.tasks || cat.tasks.length === 0) { container.innerHTML = "<div class='empty'><h3>لا مهام منجزة</h3></div>"; return; }
+
   var html = "";
   cat.tasks.forEach(function(t) {
     var grp = "";
@@ -1959,12 +2204,17 @@ function renderHistoryTasks(container) {
       grp += "</div>";
     }
     var meta = [];
-    if (t.target) meta.push(t.target + " " + (t.unit || ""));
     if (t.completedAt) meta.push(formatTime(t.completedAt));
-    html += "<div class='hist-task-item'><div class='hist-task-title'>" + escapeHTML(t.title) + "</div>" + grp + (meta.length > 0 ? "<div class='hist-task-meta'>" + meta.join(" • ") + "</div>" : "") + "</div>";
+
+    html += "<div class='hist-task-item'>" +
+      "<div class='hist-task-title'>" + escapeHTML(t.title) + "</div>" +
+      grp +
+      (meta.length > 0 ? "<div class='hist-task-meta'>" + meta.join(" • ") + "</div>" : "") +
+    "</div>";
   });
   container.innerHTML = html;
 }
+
 function openHistoryDay(d) { historyState.view = "categories"; historyState.selectedDate = d; historyState.selectedCatId = null; renderHistory(); }
 function openHistoryCat(c) { historyState.view = "tasks"; historyState.selectedCatId = c; renderHistory(); }
 function historyBack() { if (historyState.view === "tasks") { historyState.view = "categories"; historyState.selectedCatId = null; } else if (historyState.view === "categories") { historyState.view = "days"; historyState.selectedDate = null; } renderHistory(); }
@@ -1990,7 +2240,7 @@ function formatTime(ts) {
 }
 
 // ==========================================
-// 20. SETTINGS & NOTIFICATIONS
+// 19. SETTINGS & NOTIFICATIONS
 // ==========================================
 function renderSettings() {
   var container = document.getElementById("settings-content");
@@ -2033,15 +2283,28 @@ function renderSettings() {
     "</a>" +
   "</div>";
 
-  var notifOn = Notification.permission === 'granted';
-  html += "<div class='settings-group'>" + 
-    buildToggle("sounds", "الأصوات", s.sounds) + 
-    buildToggle("vibrate", "الاهتزاز", s.vibrate) + 
-    "<div class='settings-item' onclick='Notification.requestPermission().then(function(){renderSettings();})'><div class='settings-icon'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9'/><path d='M13.73 21a2 2 0 0 1-3.46 0'/></svg></div><div class='settings-label'>التنبيهات</div><button class='switch " + (notifOn ? "on" : "") + "' type='button'></button></div>" +
+  html += "<div class='settings-group'>" +
+    "<button class='settings-item' onclick='restartTutorial()'>" +
+      "<div class='settings-icon'>" + ICONS.info + "</div>" +
+      "<div class='settings-label'>إعادة عرض الدليل التعريفي</div>" +
+      "<div class='settings-value'>↺</div>" +
+    "</button>" +
+  "</div>";
+
+  var notifOn = (typeof Notification !== 'undefined') && Notification.permission === 'granted';
+  html += "<div class='settings-group'>" +
+    buildToggle("sounds", "الأصوات", s.sounds) +
+    buildToggle("vibrate", "الاهتزاز", s.vibrate) +
+    "<div class='settings-item' onclick='requestNotifPerm()'><div class='settings-icon'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9'/><path d='M13.73 21a2 2 0 0 1-3.46 0'/></svg></div><div class='settings-label'>التنبيهات</div><button class='switch " + (notifOn ? "on" : "") + "' type='button'></button></div>" +
   "</div>";
 
   html += "<div class='settings-group'><button class='settings-item' onclick='logout()'><div class='settings-icon accent'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/><polyline points='16 17 21 12 16 7'/><line x1='21' y1='12' x2='9' y2='12'/></svg></div><div class='settings-label'>" + (guest ? "إنهاء الجلسة" : "تسجيل الخروج") + "</div></button></div>";
   container.innerHTML = html;
+}
+
+function requestNotifPerm() {
+  if (typeof Notification === 'undefined') { alert("جهازك لا يدعم التنبيهات"); return; }
+  Notification.requestPermission().then(function() { renderSettings(); });
 }
 
 function buildToggle(k, l, v) {
@@ -2049,16 +2312,15 @@ function buildToggle(k, l, v) {
 }
 function toggleSetting(k) { var s = loadSettings(); s[k] = !s[k]; saveSettings(s); playSound("tap"); renderSettings(); }
 
-// التنبيهات
 var notifiedTasks = new Set();
 function setupNotifications() {
   setInterval(function() {
-    if (Notification.permission !== "granted") return;
+    if (typeof Notification === 'undefined' || Notification.permission !== "granted") return;
     var now = new Date();
     var timeStr = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
     currentTasks.forEach(function(t) {
       if (!t.done && t.time === timeStr && !notifiedTasks.has(t.id)) {
-        new Notification("مِرْقاة - تذكير", { body: "حان وقت: " + t.title });
+        try { new Notification("مِرْقاة - تذكير", { body: "حان وقت: " + t.title }); } catch(e){}
         notifiedTasks.add(t.id);
       }
     });
@@ -2066,14 +2328,14 @@ function setupNotifications() {
 }
 
 // ==========================================
-// 21. PWA INSTALL
+// 20. PWA INSTALL
 // ==========================================
 var deferredInstallPrompt = null;
 var installAttemptedThisSession = false;
 
 var isAppInstalled = window.matchMedia('(display-mode: standalone)').matches
   || window.navigator.standalone === true
-  || document.referrer.indexOf('android-app://') > -1;
+  || (document.referrer && document.referrer.indexOf('android-app://') > -1);
 
 function isIOSDevice() { return /iPhone|iPad|iPod/.test(navigator.userAgent || ''); }
 
@@ -2098,7 +2360,7 @@ function triggerAutoInstallPrompt() {
   deferredInstallPrompt = null;
   try {
     prompt.prompt();
-    prompt.userChoice.then(function(choice) {
+    prompt.userChoice.then(function() {
       updateInstallBanner();
       if (document.getElementById('settings-screen') && document.getElementById('settings-screen').classList.contains('active')) renderSettings();
     }).catch(function() {});
@@ -2110,10 +2372,7 @@ function triggerAutoInstallPrompt() {
 
 function tryAutoInstall() {
   if (isAppInstalled) return;
-  if (deferredInstallPrompt) {
-    triggerAutoInstallPrompt();
-    return;
-  }
+  if (deferredInstallPrompt) { triggerAutoInstallPrompt(); return; }
   if (isIOSDevice() && SafeStorage.getItem('mrq_ios_install_shown') !== '1') {
     SafeStorage.setItem('mrq_ios_install_shown', '1');
     setTimeout(showIosInstallModal, 500);
@@ -2141,16 +2400,10 @@ function dismissInstallBanner() {
 
 function installApp() {
   if (isAppInstalled) return;
-  if (deferredInstallPrompt) {
-    installAttemptedThisSession = false;
-    triggerAutoInstallPrompt();
-    return;
-  }
+  if (deferredInstallPrompt) { installAttemptedThisSession = false; triggerAutoInstallPrompt(); return; }
   if (isIOSDevice()) { showIosInstallModal(); return; }
   if (/Android/.test(navigator.userAgent || '')) {
-    setTimeout(function() {
-      if (deferredInstallPrompt) triggerAutoInstallPrompt();
-    }, 1200);
+    setTimeout(function() { if (deferredInstallPrompt) triggerAutoInstallPrompt(); }, 1200);
     return;
   }
   setTimeout(function() { if (deferredInstallPrompt) triggerAutoInstallPrompt(); }, 800);
@@ -2160,7 +2413,7 @@ function showIosInstallModal() { showModal("ios-install-modal"); }
 function closeIosInstallModal() { hideModal("ios-install-modal"); }
 
 // ==========================================
-// 22. SERVICE WORKER
+// 21. SERVICE WORKER
 // ==========================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
@@ -2169,7 +2422,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // ==========================================
-// 23. START
+// 22. START
 // ==========================================
 init();
 </script>
