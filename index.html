@@ -19,6 +19,8 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<!-- مكتبة السحب والإفلات -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -110,6 +112,14 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .install-banner-btn { padding: 9px 16px; border-radius: 10px; border: none; background: #fff; color: #4a7562; font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
 .install-banner-close { position: absolute; top: 6px; left: 6px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.2); border: none; color: #fff; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1; }
 
+/* ── الميزات الجديدة ── */
+.prayer-widget { background: linear-gradient(135deg, #4a7562 0%, #2b3d33 100%); border-radius: 16px; padding: 16px; margin-bottom: 12px; color: #fff; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); }
+.prayer-info { text-align: right; }
+.prayer-title { font-size: 13px; opacity: 0.8; }
+.prayer-time { font-size: 20px; font-weight: 800; margin-top: 4px; }
+.prayer-next { font-size: 14px; font-weight: 600; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; }
+.streak-widget { display: flex; align-items: center; gap: 8px; background: var(--accent-soft); border: 1px solid var(--accent); padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; color: #8a5a2c; font-weight: 700; font-size: 14px; }
+
 .list-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
 .list-card { background: var(--surface); border-radius: 18px; padding: 18px 16px 16px; cursor: pointer; border: 1px solid var(--cat-border); font-family: inherit; text-align: right; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
 .list-icon { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, var(--cat-color) 0%, var(--cat-dark) 100%); }
@@ -152,6 +162,8 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .task { background: var(--surface); border-radius: 16px; padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--task-border); }
 .task.done { background: var(--task-tint); border-color: var(--task-border-strong); }
 .task-row { display: flex; align-items: flex-start; gap: 11px; }
+.drag-handle { cursor: grab; color: var(--faint); width: 16px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 18px; letter-spacing: -3px; margin-left: -4px; }
+.drag-handle:active { cursor: grabbing; }
 .check { width: 26px; height: 26px; border-radius: 9px; border: 2px solid var(--task-border-strong); flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--surface); cursor: pointer; padding: 0; }
 .check svg { width: 13px; height: 13px; opacity: 0; }
 .check.done { background: var(--task-color); border-color: var(--task-color); }
@@ -215,6 +227,9 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .chip { padding: 9px 14px; border-radius: 10px; background: var(--surface-soft); border: 1px solid var(--border-strong); color: var(--muted); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
 .chip.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+.chip.p-high.active { background: #f6e2df; border-color: #c85a54; color: #c85a54; font-weight: 700; }
+.chip.p-med.active { background: #f7e6d5; border-color: #d99a6c; color: #d99a6c; font-weight: 700; }
+.chip.p-low.active { background: #dfece5; border-color: #5a8b78; color: #5a8b78; font-weight: 700; }
 .switch { width: 44px; height: 26px; border-radius: 13px; background: var(--border-strong); position: relative; cursor: pointer; flex-shrink: 0; border: none; padding: 0; }
 .switch::after { content: ""; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
 .switch.on { background: var(--primary); }
@@ -246,18 +261,25 @@ body { display: flex; justify-content: center; align-items: stretch; }
 .color-swatch { width: 32px; height: 32px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; padding: 0; }
 .color-swatch.active { border-color: var(--text); box-shadow: 0 0 0 2px var(--surface); }
 
+/* تصميم السجل الجديد */
+.hist-summary { background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); text-align: center; box-shadow: var(--shadow-sm); }
+.hist-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 100px; margin-top: 20px; gap: 6px; }
+.chart-bar { flex: 1; background: var(--surface-soft); border-radius: 6px 6px 0 0; position: relative; transition: height 0.3s; min-height: 4px; overflow: hidden; display: flex; align-items: flex-end; }
+.chart-bar-fill { width: 100%; background: linear-gradient(0deg, var(--primary), #8ec4a6); border-radius: 6px 6px 0 0; transition: height 0.3s; }
+.chart-label { font-size: 10px; color: var(--muted); margin-top: 6px; text-align: center; font-weight: 600; }
+
+.history-day-card { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); cursor: pointer; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 16px; transition: transform 0.15s; }
+.history-day-card:active { transform: scale(0.98); }
+.circular-progress { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+.circular-progress::after { content: ""; position: absolute; inset: 4px; background: var(--surface); border-radius: 50%; }
+.circular-progress span { position: relative; z-index: 1; color: var(--text); }
+.hist-info { flex: 1; }
+.hist-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.hist-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.hist-chevron { width: 18px; height: 18px; color: var(--faint); }
+
 .hist-back-btn { display: none; }
 .hist-back-btn.show { display: flex; }
-.history-day-card { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); cursor: pointer; box-shadow: var(--shadow-sm); }
-.history-day-card.today { border-color: var(--primary); }
-.hist-day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.hist-day-label { font-size: 14.5px; font-weight: 700; color: var(--text); }
-.hist-day-date { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
-.hist-percent-badge { padding: 8px 14px; border-radius: 12px; color: #fff; font-size: 18px; font-weight: 800; min-width: 68px; text-align: center; }
-.hist-progress { height: 8px; border-radius: 4px; background: var(--border); overflow: hidden; margin-bottom: 8px; }
-.hist-progress-fill { height: 100%; border-radius: 4px; }
-.hist-day-meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
-.hist-chevron { width: 18px; height: 18px; color: var(--muted); }
 
 .hist-cat-card { background: var(--surface); border-radius: 14px; padding: 14px; margin-bottom: 10px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .hist-cat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; }
@@ -290,11 +312,6 @@ a.settings-item { text-decoration: none; color: inherit; }
 .settings-item.install-highlight .settings-icon { background: rgba(255,255,255,0.25); color: #fff; }
 .settings-item.install-highlight .settings-label { color: #fff; font-weight: 700; }
 .settings-item.install-highlight .settings-value { color: rgba(255,255,255,0.9); }
-
-.toast { position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: #fff; padding: 12px 12px 12px 16px; border-radius: 12px; font-size: 13px; font-weight: 500; z-index: 200; text-align: center; transition: transform 0.3s; max-width: 90%; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-lg); pointer-events: none; }
-.toast.show { transform: translateX(-50%) translateY(0); pointer-events: auto; }
-.toast-close { background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 16px; cursor: pointer; padding: 4px 9px; border-radius: 7px; line-height: 1; flex-shrink: 0; }
-.toast-close:active { background: rgba(255,255,255,0.3); }
 </style>
 </head>
 <body>
@@ -356,6 +373,22 @@ a.settings-item { text-decoration: none; color: inherit; }
         <div class="guest-banner-body"><div class="guest-banner-title">أنت تستخدم حساب ضيف</div><div class="guest-banner-desc">أنشئ حساباً سحابياً لفتح بياناتك على أي جهاز</div></div>
         <button class="guest-banner-btn" onclick="showSignupForGuest()">سجّل الآن</button>
       </div>
+      
+      <!-- مواقيت الصلاة -->
+      <div class="prayer-widget" id="prayer-widget" style="display:none;">
+        <div class="prayer-info">
+          <div class="prayer-title">الصلاة القادمة</div>
+          <div class="prayer-time" id="prayer-name">—</div>
+        </div>
+        <div class="prayer-next" id="prayer-time">—</div>
+      </div>
+
+      <!-- السلاسل -->
+      <div class="streak-widget" id="streak-widget" style="display:none;">
+        <span style="font-size:20px;">🔥</span>
+        <span>سلسلة الإنجاز: <span id="streak-count">0</span> أيام</span>
+      </div>
+
       <div class="install-banner" id="install-banner" style="display:none;" onclick="installApp()">
         <button class="install-banner-close" type="button" onclick="event.stopPropagation(); dismissInstallBanner();">×</button>
         <div class="install-banner-icon">
@@ -458,6 +491,14 @@ a.settings-item { text-decoration: none; color: inherit; }
         <input type="text" class="form-input" id="task-title-input" placeholder="مثال: صلاة الفجر">
       </div>
       <div class="form-field">
+        <label class="form-label">الأولوية</label>
+        <div class="chips" id="task-priority-chips">
+          <button class="chip p-high" data-priority="high" onclick="setTaskPriority('high')">عالية</button>
+          <button class="chip p-med active" data-priority="medium" onclick="setTaskPriority('medium')">متوسطة</button>
+          <button class="chip p-low" data-priority="low" onclick="setTaskPriority('low')">منخفضة</button>
+        </div>
+      </div>
+      <div class="form-field">
         <label class="form-label">التكرار</label>
         <div class="chips" id="task-freq-chips">
           <button class="chip active" data-freq="once" onclick="setTaskFreq('once')">اليوم فقط</button>
@@ -465,28 +506,12 @@ a.settings-item { text-decoration: none; color: inherit; }
         </div>
       </div>
       <div class="form-field">
-        <div style="display:flex; justify-content:space-between; padding:12px 14px; background:var(--surface-soft); border-radius:10px; border:1px solid var(--border-strong);" onclick="toggleQuantity()">
-          <div><div style="font-size:13.5px; font-weight:500;">إضافة هدف / كمية</div></div>
-          <button class="switch" id="qty-switch" type="button"></button>
-        </div>
-        <div id="qty-fields" style="display:none; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-          <input type="number" class="form-input" id="task-target" placeholder="الهدف" min="1">
-          <input type="text" class="form-input" id="task-unit" placeholder="الوحدة (مرة)">
-        </div>
+        <label class="form-label">وقت التذكير (اختياري)</label>
+        <input type="time" class="form-input" id="task-time">
       </div>
       <div class="form-field">
-        <label class="form-label">أوقات التذكير</label>
-        <button type="button" class="form-input" onclick="openTimePicker()" style="text-align: right; cursor: pointer;">+ إضافة وقت</button>
-        <div class="times-editor" id="times-editor-list"></div>
-      </div>
-      <div class="form-field">
-        <label class="form-label">مجموعات الخيارات (مثل: أين صليت؟)</label>
-        <div id="opt-groups-editor"></div>
-        <button type="button" class="add-group-btn" onclick="addOptionGroup()">+ إضافة مجموعة</button>
-      </div>
-      <div class="form-field">
-        <label class="form-label">ملاحظات</label>
-        <textarea class="form-textarea" id="task-notes" placeholder="اختياري..."></textarea>
+        <label class="form-label">ملاحظات (اختياري)</label>
+        <textarea class="form-textarea" id="task-notes" placeholder="اكتب ملاحظاتك هنا..."></textarea>
       </div>
     </div>
     <div class="modal-footer">
@@ -566,7 +591,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- iOS INSTALL MODAL -->
   <div class="modal" id="ios-install-modal" style="z-index: 115;">
     <div class="modal-handle"></div>
     <div class="modal-header">
@@ -603,7 +627,6 @@ a.settings-item { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
 </div>
 
 <script>
@@ -638,7 +661,7 @@ var SafeStorage = {
 };
 
 var cloudUser = null;
-var cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, prayersAdded: false, lastOpen: "", displayName: "" };
+var cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false, lastOpen: "", displayName: "" };
 var cloudSaveTimer = null;
 
 function scheduleCloudSave() {
@@ -648,6 +671,7 @@ function scheduleCloudSave() {
     firebase.firestore().collection('users').doc(cloudUser.uid).set({
       tasks: cloudData.tasks, categories: cloudData.categories,
       dailySnapshots: cloudData.dailySnapshots, settings: cloudData.settings,
+      streak: cloudData.streak, lastStreakDate: cloudData.lastStreakDate,
       prayersAdded: cloudData.prayersAdded, lastOpen: cloudData.lastOpen,
       displayName: cloudData.displayName || ''
     }, { merge: true }).catch(function(e){ console.warn("Cloud save failed", e); });
@@ -790,18 +814,20 @@ function handleAuth(ev) {
           var wasGuest = SafeStorage.getItem("mrq_currentUser");
           var backup = null;
           if (wasGuest && isGuestUser(wasGuest)) {
-            backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), dailySnapshots: loadUserData("dailySnapshots", null), settings: loadUserData("settings", null) };
+            backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), dailySnapshots: loadUserData("dailySnapshots", null), settings: loadUserData("settings", null), streak: loadUserData("streak", 0), lastStreakDate: loadUserData("lastStreakDate", "") };
           }
-          cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, prayersAdded: false, displayName: name };
+          cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false, displayName: name };
           if (backup && backup.tasks) {
             cloudData.tasks = backup.tasks; cloudData.categories = backup.categories || [];
             cloudData.dailySnapshots = backup.dailySnapshots || {}; cloudData.settings = backup.settings || {};
+            cloudData.streak = backup.streak || 0; cloudData.lastStreakDate = backup.lastStreakDate || "";
             cloudData.prayersAdded = true;
           }
           return firebase.firestore().collection('users').doc(u.uid).set({
             displayName: name, email: username,
             tasks: cloudData.tasks, categories: cloudData.categories,
             dailySnapshots: cloudData.dailySnapshots, settings: cloudData.settings,
+            streak: cloudData.streak, lastStreakDate: cloudData.lastStreakDate,
             prayersAdded: cloudData.prayersAdded, createdAt: Date.now()
           });
         })
@@ -820,7 +846,7 @@ function handleAuth(ev) {
         .then(function(doc) {
           if (doc && doc.exists) {
             var d = doc.data();
-            cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, settings: d.settings || {}, prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
+            cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, settings: d.settings || {}, streak: d.streak || 0, lastStreakDate: d.lastStreakDate || "", prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
           }
           btn.disabled = false; enterApp();
         })
@@ -839,7 +865,7 @@ function handleAuth(ev) {
     var prev = SafeStorage.getItem("mrq_currentUser");
     var wasGuest = isGuestUser(prev);
     var backup = null;
-    if (wasGuest && prev) backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), snapshots: loadUserData("dailySnapshots", null), settings: loadUserData("settings", null) };
+    if (wasGuest && prev) backup = { tasks: loadUserData("tasks", null), categories: loadUserData("categories", null), snapshots: loadUserData("dailySnapshots", null), settings: loadUserData("settings", null), streak: loadUserData("streak", 0), lastStreakDate: loadUserData("lastStreakDate", "") };
     if (authMode === "signup") {
       if (users[username]) { showAuthError("اسم المستخدم موجود"); return; }
       users[username] = { password: simpleHash(password), displayName: displayName || username, createdAt: Date.now() };
@@ -849,6 +875,8 @@ function handleAuth(ev) {
         if (backup.categories !== null) saveUserData("categories", backup.categories);
         if (backup.snapshots !== null) saveUserData("dailySnapshots", backup.snapshots);
         if (backup.settings !== null) saveUserData("settings", backup.settings);
+        if (backup.streak !== undefined) saveUserData("streak", backup.streak);
+        if (backup.lastStreakDate !== undefined) saveUserData("lastStreakDate", backup.lastStreakDate);
         delete users[prev]; saveUsers(users);
       }
       document.getElementById("guest-back-btn").style.display = "none";
@@ -881,7 +909,7 @@ function cancelGuestUpgrade() { document.getElementById("guest-back-btn").style.
 function logout() {
   if (!confirm("تسجيل الخروج؟")) return;
   if (CLOUD_ENABLED && cloudUser) {
-    firebase.auth().signOut().then(function() { cloudUser = null; cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, prayersAdded: false }; setCurrentUser(null); showScreen("auth"); });
+    firebase.auth().signOut().then(function() { cloudUser = null; cloudData = { tasks: [], categories: [], dailySnapshots: {}, settings: {}, streak: 0, lastStreakDate: "", prayersAdded: false }; setCurrentUser(null); showScreen("auth"); });
   } else {
     setCurrentUser(null);
     document.getElementById("auth-username").value = "";
@@ -961,7 +989,7 @@ var currentTasks = [];
 var currentCategoryId = null;
 var currentSectionId = null;
 var editingTaskId = null;
-var formState = { freq: "once", hasQty: false };
+var formState = { freq: "once", hasQty: false, priority: "medium" };
 var formTimes = [];
 var editorGroups = [];
 var historyState = { view: "days", selectedDate: null, selectedCatId: null };
@@ -981,7 +1009,7 @@ function init() {
           .then(function(doc) {
             if (doc.exists) {
               var d = doc.data();
-              cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, settings: d.settings || {}, prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
+              cloudData = { tasks: d.tasks || [], categories: d.categories || [], dailySnapshots: d.dailySnapshots || {}, settings: d.settings || {}, streak: d.streak || 0, lastStreakDate: d.lastStreakDate || "", prayersAdded: d.prayersAdded || false, displayName: d.displayName || '' };
             }
             enterApp();
             startCloudSync();
@@ -997,6 +1025,7 @@ function init() {
     var user = SafeStorage.getItem("mrq_currentUser");
     if (user && getUsers()[user]) enterApp(); else showScreen("auth");
   }
+  setupNotifications();
 }
 
 function startCloudSync() {
@@ -1007,6 +1036,7 @@ function startCloudSync() {
     var d = doc.data();
     cloudData.tasks = d.tasks || []; cloudData.categories = d.categories || [];
     cloudData.dailySnapshots = d.dailySnapshots || {}; cloudData.settings = d.settings || {};
+    cloudData.streak = d.streak || 0; cloudData.lastStreakDate = d.lastStreakDate || "";
     cloudData.prayersAdded = d.prayersAdded || false;
     try {
       currentCategories = cloudData.categories; currentTasks = cloudData.tasks;
@@ -1045,6 +1075,7 @@ function enterApp() {
 
     var msg = autoSnapshot();
     resetDailyTasks();
+    updateStreakOnOpen();
 
     var h = new Date().getHours(), greet = "أهلاً";
     if (h < 12) greet = "صباح الخير"; else if (h < 17) greet = "مساء الخير"; else greet = "مساء النور";
@@ -1059,13 +1090,12 @@ function enterApp() {
     var dhikrEl = document.getElementById("home-dhikr");
     if (dhikrEl) dhikrEl.innerHTML = "<span>" + getRandomDhikr() + "</span>";
 
+    fetchPrayerTimes();
     goHome();
-    if (msg) setTimeout(function(){ showToast(msg); }, 900);
-
+    
     var s = loadSettings();
     if (!s.tutorialDone) setTimeout(startTutorial, 500);
 
-    // ✅ محاولة إطلاق نافذة التثبيت تلقائياً — بدون أي زر من عندنا
     setTimeout(tryAutoInstall, 2200);
   } catch (err) {
     console.error(err);
@@ -1144,7 +1174,7 @@ function ensureDefaultPrayers() {
           { title: "أين صليت؟", options: prayers[i].options, selected: null },
           { title: "السنة", options: prayers[i].sunnah, selected: null }
         ],
-        completedAt: null, lastReset: getTodayStr(), createdAt: now, isDefaultPrayer: true
+        completedAt: null, lastReset: getTodayStr(), createdAt: now, isDefaultPrayer: true, priority: "high"
       });
     }
   }
@@ -1180,7 +1210,7 @@ function finishTutorial() { document.getElementById("tutorial-screen").classList
 function autoSnapshot() {
   var today = getTodayStr();
   var lastOpen = getUserMeta("lastOpen");
-  if (!lastOpen || lastOpen === today) { setUserMeta("lastOpen", today); return null; }
+  if (!lastOpen || lastOpen === today) { setUserMeta("lastOpen", today); return; }
   var snapshots = loadUserData("dailySnapshots", {});
   if (!snapshots[lastOpen]) {
     var catsSnap = [], totalAll = 0, compAll = 0;
@@ -1199,11 +1229,12 @@ function autoSnapshot() {
     snapshots[lastOpen] = { date: lastOpen, categories: catsSnap, totalTasks: totalAll, completedTasks: compAll, percent: totalAll > 0 ? Math.round(compAll / totalAll * 100) : 0 };
     saveUserData("dailySnapshots", snapshots);
     setUserMeta("lastOpen", today);
-    return "تم تسجيل إنجاز " + formatDateLabelShort(lastOpen) + " بنسبة " + snapshots[lastOpen].percent + "%";
+    return;
   }
   setUserMeta("lastOpen", today);
   return null;
 }
+
 function resetDailyTasks() {
   var today = getTodayStr(), changed = false;
   currentTasks.forEach(function(t) {
@@ -1219,7 +1250,70 @@ function resetDailyTasks() {
 }
 
 // ==========================================
-// 10. NAVIGATION
+// 10. STREAKS & PRAYERS
+// ==========================================
+function updateStreakOnOpen() {
+  var today = new Date().toDateString();
+  var lastDate = loadUserData("lastStreakDate", "");
+  var streak = loadUserData("streak", 0);
+  var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  
+  if (lastDate === today) {
+    // Already updated today
+  } else if (lastDate === yesterday.toDateString()) {
+    // Keep streak
+  } else if (lastDate !== "") {
+    // Broken streak
+    streak = 0;
+    saveUserData("streak", 0);
+  }
+  saveUserData("lastStreakDate", today);
+  document.getElementById("streak-count").textContent = streak;
+  document.getElementById("streak-widget").style.display = streak > 0 ? "flex" : "none";
+}
+
+function checkStreakOnCompletion() {
+  var today = new Date().toDateString();
+  var lastDate = loadUserData("lastStreakDate", "");
+  var streak = loadUserData("streak", 0);
+  if (lastDate !== today) {
+    streak++;
+    saveUserData("streak", streak);
+    saveUserData("lastStreakDate", today);
+    document.getElementById("streak-count").textContent = streak;
+    document.getElementById("streak-widget").style.display = "flex";
+  }
+}
+
+function fetchPrayerTimes() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat = pos.coords.latitude, lng = pos.coords.longitude;
+    fetch('https://api.aladhan.com/v1/timings?latitude=' + lat + '&longitude=' + lng + '&method=4')
+      .then(function(r) { return r.json(); }).then(function(data) {
+        var t = data.data.timings;
+        var now = new Date().getHours() * 60 + new Date().getMinutes();
+        var prayers = [
+          { name: "الفجر", time: t.Fajr }, { name: "الظهر", time: t.Dhuhr },
+          { name: "العصر", time: t.Asr }, { name: "المغرب", time: t.Maghrib }, { name: "العشاء", time: t.Isha }
+        ];
+        for (var i=0; i<prayers.length; i++) {
+          var p = prayers[i];
+          var parts = p.time.split(":");
+          var pMins = parseInt(parts[0],10) * 60 + parseInt(parts[1],10);
+          if (pMins > now) {
+            document.getElementById("prayer-name").textContent = "صلاة " + p.name;
+            document.getElementById("prayer-time").textContent = p.time;
+            document.getElementById("prayer-widget").style.display = "flex";
+            break;
+          }
+        }
+      }).catch(function(){});
+  }, function(){});
+}
+
+// ==========================================
+// 11. NAVIGATION
 // ==========================================
 function showScreen(name) {
   document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
@@ -1242,7 +1336,7 @@ function backFromTasks() {
 }
 
 // ==========================================
-// 11. HOME
+// 12. HOME
 // ==========================================
 function renderHome() {
   var container = document.getElementById("home-lists");
@@ -1280,12 +1374,10 @@ function deleteCategory(catId, ev) {
     currentTasks = currentTasks.filter(function(t){ return t.cat !== catId; });
     saveUserData("tasks", currentTasks);
     renderHome();
-    showToast("تم حذف القائمة ✓");
     playSound("tap");
     vibrate(15);
   } else {
     if (btn) { btn.classList.add("confirm"); btn.textContent = "?"; }
-    showToast("اضغط مرة أخرى على زر الحذف للتأكيد", true);
     catDeleteTimers["cat_" + catId] = setTimeout(function() {
       delete catDeleteTimers["cat_" + catId];
       if (btn) { btn.classList.remove("confirm"); btn.textContent = "×"; }
@@ -1294,7 +1386,7 @@ function deleteCategory(catId, ev) {
 }
 
 // ==========================================
-// 12. SECTIONS
+// 13. SECTIONS
 // ==========================================
 function renderSections() {
   var cat = currentCategories.filter(function(c){ return c.id === currentCategoryId; })[0];
@@ -1349,29 +1441,28 @@ function deleteSection(catId, secId) {
   currentTasks = currentTasks.filter(function(t){ return !(t.cat === catId && t.section === secId); });
   saveUserData("tasks", currentTasks);
   renderSections();
-  showToast("تم حذف الصنف ✓");
 }
 
 function openSectionModal() { document.getElementById("section-name-input").value = ""; showModal("section-modal"); setTimeout(function(){ document.getElementById("section-name-input").focus(); }, 320); }
 function closeSectionModal() { hideModal("section-modal"); }
 function saveSection() {
   var name = document.getElementById("section-name-input").value.trim();
-  if (!name) { showToast("أدخل اسم الصنف"); return; }
+  if (!name) return;
   var cat = currentCategories.filter(function(c){ return c.id === currentCategoryId; })[0];
   if (!cat) return;
   if (!cat.sections) cat.sections = [];
-  if (cat.sections.some(function(s){ return s.name === name; })) { showToast("اسم الصنف موجود"); return; }
+  if (cat.sections.some(function(s){ return s.name === name; })) return;
   cat.sections.push({ id: uid("sec_"), name: name });
   saveUserData("categories", currentCategories);
   closeSectionModal();
   renderSections();
   playSound("add"); vibrate(15);
-  showToast("تمت إضافة الصنف ✓");
 }
 
 // ==========================================
-// 13. TASKS
+// 14. TASKS & DRAG/DROP
 // ==========================================
+var sortableInstance = null;
 function renderTasks() {
   resetDailyTasks();
   var cat = currentCategories.filter(function(c){ return c.id === currentCategoryId; })[0];
@@ -1379,24 +1470,54 @@ function renderTasks() {
   document.getElementById("tasks-title").textContent = sec ? sec.name : (cat ? cat.name : "المهام");
 
   var tasks = currentTasks.filter(function(t){ return t.cat === currentCategoryId && t.section === currentSectionId; });
+  
+  tasks.sort(function(a, b) {
+    var pMap = { high: 1, medium: 2, low: 3 };
+    var pA = pMap[a.priority || 'medium'];
+    var pB = pMap[b.priority || 'medium'];
+    if (pA !== pB) return pA - pB;
+    return (a.order || 0) - (b.order || 0);
+  });
+
   var activeCount = tasks.filter(function(t){ return !t.done; }).length;
   document.getElementById("tasks-subtitle").textContent = activeCount + " نشطة من " + tasks.length;
 
   var listEl = document.getElementById("tasks-list");
   if (tasks.length === 0) {
     listEl.innerHTML = "<div class='empty'><h3>لا مهام في هذا الصنف</h3><p>اضغط زر الإضافة أعلى الشاشة لإضافة مهمة</p><div class='dhikr-card'>" + getRandomDhikr() + "</div></div>";
+    if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
     return;
   }
-  tasks.sort(function(a, b) { return (a.createdAt || 0) - (b.createdAt || 0); });
+  
   var html = "";
   tasks.forEach(function(t, idx) { html += buildTaskHTML(t, idx); });
   listEl.innerHTML = html;
+
+  if (sortableInstance) sortableInstance.destroy();
+  sortableInstance = new Sortable(listEl, {
+    handle: '.drag-handle',
+    animation: 150,
+    onEnd: function() {
+      var newOrder = Array.from(listEl.children).map(function(c) { return parseInt(c.getAttribute('data-id')); });
+      newOrder.forEach(function(id, index) {
+        var t = findTask(id);
+        if (t) t.order = index;
+      });
+      saveUserData("tasks", currentTasks);
+      renderTasks();
+    }
+  });
 }
 
 function buildTaskHTML(t, idx) {
   var cat = currentCategories.filter(function(c){ return c.id === t.cat; })[0] || { color: "#888" };
   var dark = darken(cat.color, 0.22);
   var vars = "--task-color:" + cat.color + ";--task-dark:" + dark + ";--task-tint:" + hexToRgba(cat.color, 0.08) + ";--task-border:" + hexToRgba(cat.color, 0.18) + ";--task-border-strong:" + hexToRgba(cat.color, 0.35) + ";";
+  
+  var p = t.priority || 'medium';
+  var pColor = p === 'high' ? '#c85a54' : (p === 'low' ? '#5a8b78' : '#d99a6c');
+  var pBorder = "border-right: 4px solid " + pColor + ";";
+
   var doneClass = t.done ? " done" : "";
   var checkClass = "check" + (t.done ? " done" : "");
   var checkHTML = "<button class='" + checkClass + "' type='button' onclick='toggleTask(" + t.id + ", event)'>" + ICONS.check + "</button>";
@@ -1429,8 +1550,10 @@ function buildTaskHTML(t, idx) {
     progressHTML = "<div class='task-progress'><div class='task-progress-bar'><div class='task-progress-fill' style='width:" + pct + "%'></div></div><span class='task-progress-text'>" + (t.current || 0) + "/" + t.target + " " + (t.unit || "") + "</span>" + btns + "</div>";
   }
 
-  return "<div class='task" + doneClass + "' style='" + vars + "'>" +
-    "<div class='task-row'>" + checkHTML +
+  return "<div class='task" + doneClass + "' style='" + vars + pBorder + "' data-id='" + t.id + "'>" +
+    "<div class='task-row'>" +
+      "<div class='drag-handle'>⋮⋮</div>" +
+      checkHTML +
       "<div class='task-main'><div class='task-title'>" + escapeHTML(t.title) + "</div></div>" +
       "<div class='task-actions'><button class='task-action-btn edit' type='button' onclick='openEditTask(" + t.id + ")'>" + ICONS.edit + "</button><button class='task-action-btn delete' type='button' onclick='deleteTask(" + t.id + ", event)'>" + ICONS.del + "</button></div>" +
     "</div>" + groupsHTML + timesHTML + progressHTML +
@@ -1451,6 +1574,7 @@ function toggleTask(id, ev) {
   } else {
     t.done = true; t.completedAt = Date.now();
     if (t.hasQty) t.current = t.target;
+    checkStreakOnCompletion();
     playSound("complete"); vibrate(25);
   }
   saveTasks(); renderTasks();
@@ -1463,7 +1587,11 @@ function selectGroupOption(taskId, gi, oi, ev) {
   var label = g.options[oi];
   if (g.selected === label) g.selected = null; else g.selected = label;
   var any = t.optionGroups.some(function(x){ return !!x.selected; });
-  if (any && !t.done) { t.done = true; t.completedAt = Date.now(); playSound("complete"); vibrate(25); }
+  if (any && !t.done) { 
+    t.done = true; t.completedAt = Date.now(); 
+    checkStreakOnCompletion();
+    playSound("complete"); vibrate(25); 
+  }
   else if (!any && t.done) { t.done = false; t.completedAt = null; playSound("tap"); }
   else { playSound("tap"); vibrate(8); }
   saveTasks(); renderTasks();
@@ -1473,7 +1601,11 @@ function adjustProgress(id, delta, ev) {
   if (ev) ev.stopPropagation();
   var t = findTask(id); if (!t || !t.hasQty) return;
   t.current = Math.max(0, Math.min(t.target, (t.current || 0) + delta));
-  if (t.current >= t.target && !t.done) { t.done = true; t.completedAt = Date.now(); playSound("complete"); vibrate(25); }
+  if (t.current >= t.target && !t.done) { 
+    t.done = true; t.completedAt = Date.now(); 
+    checkStreakOnCompletion();
+    playSound("complete"); vibrate(25); 
+  }
   else { playSound("tap"); vibrate(8); }
   saveTasks(); renderTasks();
 }
@@ -1485,47 +1617,51 @@ function deleteTask(id, ev) {
     clearTimeout(deleteTimers["del_" + id]); delete deleteTimers["del_" + id];
     currentTasks = currentTasks.filter(function(x){ return x.id !== id; });
     saveTasks(); renderTasks();
-    showToast("تم حذف المهمة ✓");
   } else {
-    showToast("اضغط مرة أخرى للتأكيد", true);
     deleteTimers["del_" + id] = setTimeout(function() { delete deleteTimers["del_" + id]; }, 3000);
   }
 }
 
 // ==========================================
-// 14. TASK MODAL
+// 15. TASK MODAL
 // ==========================================
 function openAddTask() {
   editingTaskId = null;
-  formState = { freq: "once", hasQty: false };
+  formState = { freq: "once", hasQty: false, priority: "medium" };
   formTimes = []; editorGroups = [];
   document.getElementById("task-modal-title").textContent = "مهمة جديدة";
   document.getElementById("task-title-input").value = "";
+  document.getElementById("task-time").value = "";
   document.getElementById("task-target").value = "";
   document.getElementById("task-unit").value = "";
   document.getElementById("task-notes").value = "";
   document.getElementById("qty-switch").classList.remove("on");
   document.getElementById("qty-fields").style.display = "none";
-  renderFreqChips(); renderEditor(); renderTimesEditor();
+  renderPriorityChips(); renderFreqChips(); renderEditor(); renderTimesEditor();
   showModal("task-modal");
   setTimeout(function(){ document.getElementById("task-title-input").focus(); }, 320);
 }
 function openEditTask(id) {
   var t = findTask(id); if (!t) return;
   editingTaskId = id;
-  formState = { freq: t.freq || "once", hasQty: !!t.hasQty };
+  formState = { freq: t.freq || "once", hasQty: !!t.hasQty, priority: t.priority || "medium" };
   formTimes = t.times ? t.times.slice() : [];
   editorGroups = t.optionGroups ? JSON.parse(JSON.stringify(t.optionGroups)) : [];
   document.getElementById("task-modal-title").textContent = "تعديل المهمة";
   document.getElementById("task-title-input").value = t.title;
+  document.getElementById("task-time").value = t.time || "";
   document.getElementById("task-target").value = t.hasQty ? t.target : "";
   document.getElementById("task-unit").value = t.hasQty ? t.unit : "";
   document.getElementById("task-notes").value = t.notes || "";
   document.getElementById("qty-switch").classList.toggle("on", !!t.hasQty);
   document.getElementById("qty-fields").style.display = t.hasQty ? "grid" : "none";
-  renderFreqChips(); renderEditor(); renderTimesEditor();
+  renderPriorityChips(); renderFreqChips(); renderEditor(); renderTimesEditor();
   showModal("task-modal");
 }
+function renderPriorityChips() {
+  document.querySelectorAll("#task-priority-chips .chip").forEach(function(c){ c.classList.toggle("active", c.getAttribute("data-priority") === formState.priority); });
+}
+function setTaskPriority(p) { formState.priority = p; renderPriorityChips(); playSound("tap"); }
 function renderFreqChips() {
   document.querySelectorAll("#task-freq-chips .chip").forEach(function(c){ c.classList.toggle("active", c.getAttribute("data-freq") === formState.freq); });
 }
@@ -1563,12 +1699,13 @@ function renderEditor() {
 
 function saveTask() {
   var title = document.getElementById("task-title-input").value.trim();
-  if (!title) { showToast("أدخل عنوان المهمة"); return; }
+  if (!title) return;
+  var time = document.getElementById("task-time").value;
   var target = 0, unit = "";
   if (formState.hasQty) {
     target = parseInt(document.getElementById("task-target").value, 10);
     unit = document.getElementById("task-unit").value.trim();
-    if (!target || target < 1 || !unit) { showToast("أكمل بيانات الهدف والوحدة"); return; }
+    if (!target || target < 1 || !unit) return;
   }
   var notes = document.getElementById("task-notes").value.trim();
   var cleanGroups = [];
@@ -1581,6 +1718,7 @@ function saveTask() {
     var t = findTask(editingTaskId);
     if (t) {
       t.title = title; t.freq = formState.freq; t.notes = notes; t.hasQty = formState.hasQty; t.times = formTimes.slice();
+      t.priority = formState.priority; t.time = time;
       if (t.hasQty) { t.target = target; t.unit = unit; if (t.current > target) t.current = target; } else { t.target = 0; t.unit = ""; t.current = 0; }
       t.optionGroups = cleanGroups;
       var any = cleanGroups.some(function(g){ return !!g.selected; });
@@ -1588,23 +1726,22 @@ function saveTask() {
       else if (any && !t.done) { t.done = true; t.completedAt = Date.now(); }
     }
     closeTaskModal(); renderTasks(); playSound("add"); vibrate(15);
-    showToast("تم تحديث المهمة ✓");
   } else {
     currentTasks.push({
       id: Date.now() + Math.floor(Math.random() * 1000),
       title: title, cat: currentCategoryId, section: currentSectionId,
-      freq: formState.freq, times: formTimes.slice(), notes: notes,
+      freq: formState.freq, times: formTimes.slice(), notes: notes, time: time,
+      priority: formState.priority, order: currentTasks.length,
       hasQty: formState.hasQty, target: target, unit: unit, current: 0, done: false,
       optionGroups: cleanGroups, completedAt: null, lastReset: getTodayStr(), createdAt: Date.now()
     });
     closeTaskModal(); renderTasks(); playSound("add"); vibrate(15);
-    showToast("تمت إضافة المهمة ✓");
   }
 }
 function closeTaskModal() { hideModal("task-modal"); editingTaskId = null; }
 
 // ==========================================
-// 15. TIME PICKER
+// 16. TIME PICKER
 // ==========================================
 var pickerHour = 12, pickerMinute = "00", pickerPeriod = "ص";
 function openTimePicker() { showModal("time-modal"); renderTimeGrids(); }
@@ -1629,7 +1766,7 @@ function confirmTime() {
 }
 
 // ==========================================
-// 16. MODAL CONTROL
+// 17. MODAL CONTROL
 // ==========================================
 function showModal(id) { document.getElementById("overlay").classList.add("show"); document.getElementById(id).classList.add("show"); }
 function hideModal(id) {
@@ -1643,7 +1780,7 @@ function closeAllModals() {
 }
 
 // ==========================================
-// 17. CATEGORY MODAL
+// 18. CATEGORY MODAL
 // ==========================================
 function openCategoryModal() {
   document.getElementById("cat-name-input").value = "";
@@ -1678,8 +1815,8 @@ function pickColor(col, btn) {
 }
 function saveCategory() {
   var name = document.getElementById("cat-name-input").value.trim();
-  if (!name) { showToast("أدخل اسم القائمة"); return; }
-  if (currentCategories.some(function(c){ return c.name === name; })) { showToast("هذه القائمة موجودة"); return; }
+  if (!name) return;
+  if (currentCategories.some(function(c){ return c.name === name; })) return;
   var newId, color, icon;
   if (selectedPresetCat && selectedPresetCat.name === name) { newId = selectedPresetCat.id; color = selectedPresetCat.color; icon = selectedPresetCat.icon; }
   else { newId = uid("cat_"); color = selectedCatColor || CATEGORY_COLORS[0]; icon = "personal"; }
@@ -1687,12 +1824,11 @@ function saveCategory() {
   saveUserData("categories", currentCategories);
   closeCategoryModal(); renderHome();
   playSound("add"); vibrate(15);
-  showToast("تمت إضافة القائمة ✓");
 }
 function closeCategoryModal() { hideModal("category-modal"); }
 
 // ==========================================
-// 18. HISTORY
+// 19. HISTORY REDESIGN
 // ==========================================
 function percentToGradient(pct) {
   if (pct >= 100) return "linear-gradient(135deg, #6fa88f 0%, #4a7562 100%)";
@@ -1718,6 +1854,7 @@ function buildLiveDayData() {
   return { date: getTodayStr(), categories: catsData, totalTasks: total, completedTasks: comp, percent: total > 0 ? Math.round(comp / total * 100) : 0, isToday: true };
 }
 function getDayData(dateStr) { if (dateStr === getTodayStr()) return buildLiveDayData(); return loadUserData("dailySnapshots", {})[dateStr] || null; }
+
 function renderHistory() {
   var container = document.getElementById("history-content");
   var titleEl = document.getElementById("history-title");
@@ -1741,6 +1878,7 @@ function renderHistory() {
     renderHistoryTasks(container);
   }
 }
+
 function renderHistoryDays(container, subEl) {
   var snapshots = loadUserData("dailySnapshots", {});
   var today = buildLiveDayData();
@@ -1749,19 +1887,54 @@ function renderHistoryDays(container, subEl) {
   if (today.totalTasks > 0) all.push(today);
   all.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
   subEl.textContent = all.length + " يوم مسجل";
-  if (all.length === 0) { container.innerHTML = "<div class='empty'><h3>لا يوجد سجل بعد</h3><p>سيظهر هنا إنجازك بعد أول يوم</p><div class='dhikr-card'>" + getRandomDhikr() + "</div></div>"; return; }
-  var html = "";
-  all.forEach(function(day) {
-    var pct = day.percent || 0, grad = percentToGradient(pct);
-    var label = day.isToday ? "اليوم" : formatDateLabelShort(day.date);
-    html += "<div class='history-day-card " + (day.isToday ? "today" : "") + "' onclick='openHistoryDay(\"" + day.date + "\")'>" +
-      "<div class='hist-day-header'><div><div class='hist-day-label'>" + escapeHTML(label) + "</div><div class='hist-day-date'>" + escapeHTML(formatDateFull(day.date)) + "</div></div><div class='hist-percent-badge' style='background:" + grad + "'>" + pct + "%</div></div>" +
-      "<div class='hist-progress'><div class='hist-progress-fill' style='width:" + pct + "%;background:" + grad + "'></div></div>" +
-      "<div class='hist-day-meta'><div><strong>" + day.completedTasks + "</strong> من <strong>" + day.totalTasks + "</strong> مهام</div>" + ICONS.chevron + "</div>" +
+  
+  if (all.length === 0) { 
+    container.innerHTML = "<div class='empty'><h3>لا يوجد سجل بعد</h3><p>سيظهر هنا إنجازك بعد أول يوم</p><div class='dhikr-card'>" + getRandomDhikr() + "</div></div>"; 
+    return; 
+  }
+
+  // Chart Data (Last 7 Days)
+  var last7Days = [];
+  for (var i = 6; i >= 0; i--) {
+    var dt = new Date(); dt.setDate(dt.getDate() - i);
+    var ds = getDateStr(dt);
+    var dayData = getDayData(ds);
+    var pct = dayData ? dayData.percent : 0;
+    var label = ["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"][dt.getDay()];
+    last7Days.push({ label: label, percent: pct });
+  }
+  
+  var chartHtml = last7Days.map(function(day) {
+    return "<div style='flex:1; text-align:center;'>" +
+      "<div class='chart-bar'><div class='chart-bar-fill' style='height:" + day.percent + "%'></div></div>" +
+      "<div class='chart-label'>" + day.label + "</div>" +
     "</div>";
-  });
+  }).join("");
+
+  var html = "<div class='hist-summary'>" +
+    "<h3 style='font-size:16px; font-weight:700;'>أداء آخر 7 أيام</h3>" +
+    "<div class='hist-chart'>" + chartHtml + "</div>" +
+  "</div>";
+
+  html += all.map(function(day) {
+    var pct = day.percent || 0;
+    var color = pct >= 80 ? "#5a8b78" : (pct >= 50 ? "#d99a6c" : "#c85a54");
+    var label = day.isToday ? "اليوم" : formatDateLabelShort(day.date);
+    return "<div class='history-day-card " + (day.isToday ? "today" : "") + "' onclick='openHistoryDay(\"" + day.date + "\")'>" +
+      "<div class='circular-progress' style='background: conic-gradient(" + color + " " + pct + "%, var(--border) 0);'>" +
+        "<span>" + pct + "%</span>" +
+      "</div>" +
+      "<div class='hist-info'>" +
+        "<div class='hist-title'>" + escapeHTML(label) + "</div>" +
+        "<div class='hist-date'>" + escapeHTML(formatDateFull(day.date)) + "</div>" +
+      "</div>" +
+      ICONS.chevron +
+    "</div>";
+  }).join("");
+  
   container.innerHTML = html;
 }
+
 function renderHistoryCategories(container) {
   var day = getDayData(historyState.selectedDate);
   if (!day || !day.categories || day.categories.length === 0) { container.innerHTML = "<div class='empty'><h3>لا قوائم</h3></div>"; return; }
@@ -1817,7 +1990,7 @@ function formatTime(ts) {
 }
 
 // ==========================================
-// 19. SETTINGS
+// 20. SETTINGS & NOTIFICATIONS
 // ==========================================
 function renderSettings() {
   var container = document.getElementById("settings-content");
@@ -1860,40 +2033,40 @@ function renderSettings() {
     "</a>" +
   "</div>";
 
-  html += "<div class='settings-group'>" + buildToggle("sounds", "الأصوات", s.sounds) + buildToggle("vibrate", "الاهتزاز", s.vibrate) + "</div>";
+  var notifOn = Notification.permission === 'granted';
+  html += "<div class='settings-group'>" + 
+    buildToggle("sounds", "الأصوات", s.sounds) + 
+    buildToggle("vibrate", "الاهتزاز", s.vibrate) + 
+    "<div class='settings-item' onclick='Notification.requestPermission().then(function(){renderSettings();})'><div class='settings-icon'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9'/><path d='M13.73 21a2 2 0 0 1-3.46 0'/></svg></div><div class='settings-label'>التنبيهات</div><button class='switch " + (notifOn ? "on" : "") + "' type='button'></button></div>" +
+  "</div>";
 
-  html += "<div class='settings-group'><button class='settings-item' onclick='clearAllData()'><div class='settings-icon danger'>" + ICONS.del + "</div><div class='settings-label danger'>حذف كل المهام والسجل</div></button></div>";
   html += "<div class='settings-group'><button class='settings-item' onclick='logout()'><div class='settings-icon accent'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/><polyline points='16 17 21 12 16 7'/><line x1='21' y1='12' x2='9' y2='12'/></svg></div><div class='settings-label'>" + (guest ? "إنهاء الجلسة" : "تسجيل الخروج") + "</div></button></div>";
   container.innerHTML = html;
 }
+
 function buildToggle(k, l, v) {
   return "<div class='settings-item' onclick='toggleSetting(\"" + k + "\")'><div class='settings-icon'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><circle cx='12' cy='12' r='10'/><path d='M12 8v4l3 2'/></svg></div><div class='settings-label'>" + l + "</div><button class='switch " + (v ? "on" : "") + "' type='button'></button></div>";
 }
 function toggleSetting(k) { var s = loadSettings(); s[k] = !s[k]; saveSettings(s); playSound("tap"); renderSettings(); }
-function clearAllData() {
-  if (!confirm("متأكد؟ سيتم حذف كل المهام والسجل.")) return;
-  currentTasks = []; saveUserData("tasks", []); saveUserData("dailySnapshots", {});
-  showToast("تم الحذف ✓"); renderSettings();
+
+// التنبيهات
+var notifiedTasks = new Set();
+function setupNotifications() {
+  setInterval(function() {
+    if (Notification.permission !== "granted") return;
+    var now = new Date();
+    var timeStr = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+    currentTasks.forEach(function(t) {
+      if (!t.done && t.time === timeStr && !notifiedTasks.has(t.id)) {
+        new Notification("مِرْقاة - تذكير", { body: "حان وقت: " + t.title });
+        notifiedTasks.add(t.id);
+      }
+    });
+  }, 60000);
 }
 
 // ==========================================
-// 20. TOAST
-// ==========================================
-var toastTimer = null;
-function showToast(msg, autoHide) {
-  var el = document.getElementById("toast"); if (!el) return;
-  el.innerHTML = "<span>" + escapeHTML(msg) + "</span><button class='toast-close' type='button' onclick='event.stopPropagation(); hideToast()'>×</button>";
-  el.classList.add("show");
-  if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
-  if (autoHide) toastTimer = setTimeout(function(){ el.classList.remove("show"); toastTimer = null; }, 2400);
-}
-function hideToast() {
-  var el = document.getElementById("toast"); if (el) el.classList.remove("show");
-  if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
-}
-
-// ==========================================
-// 21. PWA INSTALL — تلقائي 100%
+// 21. PWA INSTALL
 // ==========================================
 var deferredInstallPrompt = null;
 var installAttemptedThisSession = false;
@@ -1904,7 +2077,6 @@ var isAppInstalled = window.matchMedia('(display-mode: standalone)').matches
 
 function isIOSDevice() { return /iPhone|iPad|iPod/.test(navigator.userAgent || ''); }
 
-// ✅ التقاط حدث التثبيت — وحفظه
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredInstallPrompt = e;
@@ -1912,16 +2084,13 @@ window.addEventListener('beforeinstallprompt', function(e) {
   if (document.getElementById('settings-screen').classList.contains('active')) renderSettings();
 });
 
-// ✅ عند التثبيت الفعلي
 window.addEventListener('appinstalled', function() {
   deferredInstallPrompt = null;
   isAppInstalled = true;
   updateInstallBanner();
-  showToast("تم تثبيت التطبيق بنجاح ✓ — تجده على شاشتك الرئيسية");
   if (document.getElementById('settings-screen').classList.contains('active')) renderSettings();
 });
 
-// ✅ إطلاق تلقائي لنافذة المتصفح — بدون أي تدخل من المستخدم
 function triggerAutoInstallPrompt() {
   if (!deferredInstallPrompt || isAppInstalled || installAttemptedThisSession) return false;
   installAttemptedThisSession = true;
@@ -1930,9 +2099,6 @@ function triggerAutoInstallPrompt() {
   try {
     prompt.prompt();
     prompt.userChoice.then(function(choice) {
-      if (choice.outcome === 'accepted') {
-        showToast("جاري تثبيت التطبيق... انتظر لحظة");
-      }
       updateInstallBanner();
       if (document.getElementById('settings-screen') && document.getElementById('settings-screen').classList.contains('active')) renderSettings();
     }).catch(function() {});
@@ -1942,15 +2108,12 @@ function triggerAutoInstallPrompt() {
   }
 }
 
-// ✅ المحاولة التلقائية الشاملة (تكتشف الحالة وتتصرف)
 function tryAutoInstall() {
   if (isAppInstalled) return;
-  // إذا كان المتصفح جاهزاً، أطلق النافذة تلقائياً
   if (deferredInstallPrompt) {
     triggerAutoInstallPrompt();
     return;
   }
-  // iOS — لا يوجد API، أظهر نافذة الإرشادات تلقائياً
   if (isIOSDevice() && SafeStorage.getItem('mrq_ios_install_shown') !== '1') {
     SafeStorage.setItem('mrq_ios_install_shown', '1');
     setTimeout(showIosInstallModal, 500);
@@ -1977,27 +2140,19 @@ function dismissInstallBanner() {
 }
 
 function installApp() {
-  if (isAppInstalled) { showToast("التطبيق مثبت بالفعل على جهازك ✓"); return; }
-  // إذا كان هناك برومبت جاهز
+  if (isAppInstalled) return;
   if (deferredInstallPrompt) {
     installAttemptedThisSession = false;
     triggerAutoInstallPrompt();
     return;
   }
-  // iOS
   if (isIOSDevice()) { showIosInstallModal(); return; }
-  // Android بدون برومبت
   if (/Android/.test(navigator.userAgent || '')) {
-    showToast("انتظر لحظة... جاري تجهيز نافذة التثبيت", true);
-    // إعادة المحاولة بعد لحظة
     setTimeout(function() {
       if (deferredInstallPrompt) triggerAutoInstallPrompt();
-      else showToast("افتح قائمة المتصفح ⋮ واختر 'تثبيت التطبيق'", true);
     }, 1200);
     return;
   }
-  // Desktop
-  showToast("جاري تجهيز نافذة التثبيت... إذا لم تظهر، اضغط أيقونة ⊕ في شريط العنوان", true);
   setTimeout(function() { if (deferredInstallPrompt) triggerAutoInstallPrompt(); }, 800);
 }
 
